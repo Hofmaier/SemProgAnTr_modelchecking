@@ -1,0 +1,302 @@
+\documentclass[11pt,twoside,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[german]{babel}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning}
+\usepackage{glossaries}
+\usepackage{amsmath,amssymb}
+\usepackage{todonotes}
+
+\begin{document}
+
+\title{Model Checking with Spin}
+\author{Lukas Hofmaier}
+\date{today}
+\maketitle
+
+\tableofcontents
+
+\section{Model Checking}
+\label{sec:modelchecking}
+
+Ziel eines Modelcheckers ist es Modelle zu verifizieren. Das bedeutet, ein Modelchecker "uberpr"uft, ob f"ur ein gegebenes Model ein Sachverhalt wahr ist. Spin ist ein Modelchecker. Das Model wird in Promela beschrieben. Der Sachverhalt wird mit Linear Temporal Logic beschrieben. In diesem Abschnitt wird zuerst erkl"art, welche Vorteile Modelchecking gegen"uber anderen Verifikationmethoden bietet. Dann wird beschrieben wie Modelle mit der Sprache Promela erstellt werden und wie gew"unschte Eigenschaften dieser Modelle mit Linear Temporal Logic formalisiert werden.
+
+\subsection{Why Model Checking}
+\label{sec:why}
+
+Um Software zu verifizieren, gibt es unter anderem zwei M"oglichkeiten.
+\begin{description}
+\item[Peer reviewing] Der Code wird statisch analisiert. Da der Code nicht kompiliert und ausgef"uhrt wird, ist es schwierig Fehler durch Concurrency aufzudecken. Da es aber sehr einfach ist, wird es oft angewendet.
+\item[Software testing] Software wird kompiliert und ausgef"uhrt. Der Input wird so gew"ahlt, das bestimmte execution paths ausgef"uhrt werden. Der Output wird mit der Specification verglichen. Praktisch ist es nicht m"oglich alle Pfade durch Testing abzudecken. Man kann also damit zeigen, dass das System errors enth"alt aber nicht die Absenz von error.
+\end{description}
+
+Peer reviewing und Software testing sind beide nicht in der Lage 100\% aller F"alle zu verifizieren, weil nicht jeder m"ogliche State des Systems "uberpr"uft wird. Bei einer Model-based verification beschreibt, man alle m"oglichen States des Systems mit einem Model. Parallel zum Model definiert man so genannte property specifications. Ein Modelchecker verarbeitet Model und Properties und sagt, ob das Model die Properties befriedigt. Zus"atzlich ist ein Modelchecker in der Lage bei der Nichteinhaltung dieser Properties dem User ein Counterexample zu Pr"asentieren. Das ist eine Abfolge von States, die zu einem unerw"unschten State gef"uhrt haben \cite{baier08}.
+
+\section{Modeling Concurrent Systems}
+\label{sec:concurrency}
+
+Dieser Abschnitt zeigt wie Modelle mit Promela beschrieben werden und wie sich Concurrency auf das Statediagram eines Programms auswirkt. Jedes Programm kann als Statediagramm modelliert werden. Meistens werden jedoch nicht die relevanten Teile modelliert und nicht jeder State des Programm Counters.
+
+\subsection{Promela}
+\label{sec:promela}
+
+Spin verifiziert Modelle, die in der Sprache Promela beschrieben sind. Sp"ater werden Konzepte anhand von Promela-Codebeispielen beschrieben. Dieser Abschnitt soll zum Verst"andnis der Codebeispiele beitragen.
+
+Promela dient Abstraktionen von Systemen (abstractions of systems designs) zu beschreiben. Es ist eine specification language. Das Promela-Model beschreibt das Verhalten eines Systems. Promela erm"oglicht es die Synchronisation von concurrent systems zu modellieren.
+
+Die Syntax zur Deklaration der Variablen ist "ahnlich wie in der Programmiersprache C. In den nachfolgenden Beispielen wird nur der Datentyp byte verwendet.
+
+Mit dem keyword \verb|proctype| ein process type definiert. Auf \verb|proctype| folgen der Bezeichner und in Klammer \verb|{}| die statements des process type. \cite{holzmann03}
+
+Das keyword \verb|active| veranlasst Spin eine Instanz des folgenden process type zu erstellen. Der Prozess startet sofort. 
+
+\subsection{Interleaving}
+\label{sec:interleaving}
+
+Listing \ref{lst:interleavingcode} zeigt ein System in dem genau ein Prozess gestarted wird. Die statements in Prozess \verb|sequential| werden sequenziel ausgef"uhrt. Es wird eine Prozessinstanz vom type process \verb|sequential| erzeugt. Diese liest den Wert der globalen Variablen \verb|x|, addiert $2$ dazu und speichert das Resultat in der Variablen \verb|temp|. Danach wird der Wert in \verb|temp| \verb|x| zugewiesen. Die Reihenfolge der States, die das System einnehmen kann ist eindeutig. Das Statediagram dazu wird in Abbildung \ref{fig:sequencielstatediagram} gezeigt. Die Reihenfolge der statements ist eindeutig.
+
+\begin{figure}
+  \centering
+ \lstinputlisting[label={lst:interleavingcode},caption={System with a single process},numbers=left]{sequential.pml}  
+  \label{fig:interleavinglisting}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}[node distance=2cm, on grid, auto]
+    \node[state, initial, rectangle, align=left](s1){$x=0$\\ $tempA=0$};
+    \node[state, rectangle, align=left, below =of s1](s2){$x=0$\\$tempA=2$};
+    \node[state, rectangle, align=left, below =of s2](s3){$x=2$\\$tempA=2$};
+    \path[->](s1) edge node {0}(s2);
+    \path[->](s2) edge node {$x=temp$}(s3);
+  \end{tikzpicture}
+  \caption{Statediagram zu sequenziellem Programm}
+  \label{fig:sequencielstatediagram}
+\end{figure}
+
+Werden Programme concurrent ausgef"uhrt, gibt es mehrere M"oglichkeiten, in welcher Reihenfolge die Statements ausgef"uhrt werden. Es unterschiedliche Abfolgen von states m"oglich. Bei jedem "Ubergang wird nondeterministic entschieden, welcher Process als n"achstes ausgef"uhrt wird. Das zusammenf"uhren der Statements beider Process zu einer sequenziellen Abfolge nennt man Interleaving.  Listing \ref{list:interleaving2proc} zeigt ein Program bei dem 2 Processe $A$ und $B$ concurrent ausgef"uhrt werden. Das Statediagram wird Abbildung \ref{fig:interleavingtransitionsystem} gezeigt.
+
+\begin{figure}
+  \centering
+\lstinputlisting[label=list:interleaving2proc,caption={Add operation with 2 processes},numbers=left]{interleavingproc.pml}  
+\end{figure}
+
+ \begin{figure}
+   \centering
+
+ \begin{tikzpicture}[node distance=2.5cm, on grid, auto]
+\tikzstyle{every node}=[font=\tiny]
+   \node[state, initial, rectangle, align=left](s1){$x=0$\\$tempA=0$\\$tempB=0$};
+   \node[state, rectangle, align=left](s2) [below left=of s1]{$x=0$\\$tempA=2$\\$tempB=0$};
+   \node[state, rectangle, align=left](s3)[below left=of s2]{$x=2$\\$tempA=2$\\$tempB=0$};
+  \node[state, rectangle, align=left](s4)[below left=of s3]{$x=2$\\$tempA=2$\\$tempB=7$};
+\node[state, rectangle, align=left](s5)[below =of s4]{$x=7$\\$tempA=2$\\$tempB=7$};
+\node[state, rectangle, align=left](s6)[below right=of s1]{$x=0$\\$tempA=0$\\$tempB=5$};
+\node[state, rectangle, align=left](s7)[below right=of s6]{$x=5$\\$tempA=0$\\$tempB=5$};
+\node[state, rectangle, align=left](s8)[below right=of s7]{$x=5$\\$tempA=7$\\$tempB=5$};
+\node[state, rectangle, align=left](s9)[below =of s8]{$x=7$\\$tempA=7$\\$tempB=5$};
+\node[state, rectangle, align=left](s10)[below right=of s2]{$x=0$\\$tempA=2$\\$tempB=5$};
+\node[state, rectangle, align=left](s11)[below left=of s10]{$x=2$\\$tempA=2$\\$tempB=5$};
+\node[state, rectangle, align=left](s12)[below right=of s10]{$x=5$\\$tempA=2$\\$tempB=5$};
+   \path[->](s1) edge node {$tempA=x+2$}(s2);
+   \path[->](s2) edge node {$x=tempA$}(s3);
+   \path[->](s3) edge node {$tempB=x+5$}(s4);
+\path[->](s4) edge node {$x=tempB$}(s5);
+\path[->](s1) edge node {$tempB=x+5$}(s6);
+\path[->](s6) edge node {$x=tempB$}(s7);
+\path[->](s7) edge node {$tempA=x+2$}(s8);
+\path[->](s8) edge node {$x=tempA$}(s9);
+\path[->](s2) edge node {$tempB=x+5$}(s10);
+\path[->](s6) edge node {$tempB=x+5$}(s10);
+\path[->](s10) edge node {$x=tempA$}(s11);
+\path[->](s10) edge node {$x=tempB$}(s12);
+
+ \end{tikzpicture}   
+
+ \caption{State diagram for system in Listing \ref{list:interleaving2proc}}
+\label{fig:interleavingtransitionsystem}
+ \end{figure}
+
+Das Statediagram in Abbildung \ref{fig:interleavingtransitionsystem} zeigt, dass das Program in 4 unterschiedliche States terminieren kann. Der resultierende State der Computation ist non-deterministic. M"ochte man sicherstellen, dass bestimmte States nie eintreten, kann mit Spin der Statespace nach unerw"unschten States durchsucht werden.
+
+\subsubsection{Synchronization}
+\label{sec:synchronization}
+
+Listing \ref{lst:withoutsemaphore} zeigt ein Programm, in dem zwei Prozesse concurrent gestartet werden und zum Wert der Variablen $x$ den Wert $2$ dazuz"ahlen. Wenn man erzwingen m"ochte, dass das Programm mit dem Wert $4$ in $x$ terminiert, muss man die Prozesse synchronisieren. Die Prozesse m"ussen so synchronisiert werden, dass jeweils nur ein Prozess in der critical section (line 4-6) ist. Eine M"oglichkeit um mutal exclusion zu erreichen ist der Einsatz von Semaphoren. Listing \ref{list:withsemaphore} zeigt ein Programm wie mutual exlusion mit einer Semaphore erreicht wird. Wenn dieses Programm terminiert, hat die Variable $x$ immer den Wert $4$.
+
+\lstinputlisting[label={lst:withoutsemaphore},caption={Program without mutual exlusion}, numbers=left]{withoutsemaphore.pml}
+
+\lstinputlisting[label=list:withsemaphore,numbers=left,caption=Semaphore]{semaphore.pml}
+
+Werden in einem Programm mehrere Lock verwendet, kann es zu einem Deadlock kommen. Listing \ref{list:deadlock} zeigt ein Programm, bei dem es zu einem Deadlock kommen kann. Wenn Process \verbTakeAFirst die Semaphore $A$ decrementiert und gleich danach unterbrochen wird und Process \verbTakeBFirst unmittelbar danach Semaphore $B$ dekrementiert, kann keiner der beiden Processe weiterfahren, weil die ben"otigte Resource gelockt ist.
+
+In Abschnitt \ref{sec:ltl} wird beschrieben, wie Spin Deadlocks in Modellen findet.
+
+\lstinputlisting[label=list:deadlock,numbers=left]{deadlock.pml}
+
+\section{Linear Temporal Logic}
+\label{sec:ltl}
+
+ Der Sachverhalt kann mit Linear Temporal Logic beschrieben werden. Dieser Abschnitt erkl"art LTL. Ein Sachverhalt ist zum Beispiel, ob ein Model keine Deadlocks enth"alt. Die Eigenschaft, dass ein Model keinen Deadlock enth"alt, kann mit LTL formalisiert werden. Zuerst werden atomic propositions beschrieben, da sie ein Bestandteil einer LTL-Formel sind. LTL-Formel spezifizieren Linear-Time Properties. Diese wiederrum akzeptieren Traces. Deshalb wird auch erkl"rt was Traces und Linear Time Properties sind.
+
+\subsection{Atomic Propositions}
+\label{sec:atomicpropositions}
+
+Atomic propositions sind Aussagen, die wahr oder falsch sein k"onnen. Eine boolean expression ist eine atomic proposition. Sie werden zu \verb|True| oder \verb|False| evaluiert. Die Evaluation ist vom state in dem sich das System zu einem Zeitpunkt befindet abh"angig. Der Ausdruck \verb|crit < 2| ist eine atomic proposition.
+
+Die Menge $AP$ definiert die Menge aller atomic propositions eines Systems. Jedem State kann man eine Menge g"ultiger atomic propositions zuordnen. Die Teilmenge ist enthalten in $2^{AP}$.
+ 
+Atomic propositions k"onnen mit den Operatoren der Aussagenlogik (siehe Tabelle \ref{tab:operators_of_propositionallogic}) verkn"upft werden.
+
+\subsection{Traces}
+\label{sec:traces}
+
+Die Verhaltensmodelle aus Abschnitt \ref{sec:interleaving} koennen in einer Simulation ausgefuehrt werden. Die Ausfuehrung ist eine unter vielen moeglichen Abfolgen von States. Eine moegliche Abfolge startet in einem initial state und endet in einem terminal state. Jedem state kann ein Set von atomic propositions zugeordnet werden, die g"ultig sind. Ein Trace ist eine sequence von Sets, die g"ultige atomic propositions beinhalten. Ein Trace ist also ein Wort "uber dem Alphabet $2^{AP}$.
+
+Da es in einem System $S$ mehrere Ausfuehungspfade geben kann, kann es auch mehrere Traces geben. Alle Traces eines System $S$ bezeichnet man $Traces(S)$. $Traces(S)$ definiert eine Sprache.
+
+Anhand von Listing \ref{lst:criticalsection} werden nachfolgend ein m"gliche sequence von states und ein Trace gezeigt.
+
+\lstinputlisting[label=lst:criticalsection,caption={Critical section problem},numbers=left]{criticalsection.pml}
+
+Ein state kann als Triple, bestehend aus dem Wert der variable \verb|crit| und location counters der Prozesse \verb|A| und \verb|B| repr"asentiert werden. Der erste Wert im Triple zeigt, bei welcher line number sicher location counter von Prozess \verb|A| befindet und der zweite von Prozess \verb|B|.
+Eine m"ogliche sequence $\pi$ von states die bei der Simulation des Systems in Listing \ref{lst:criticalsection} ist
+
+\begin{equation}
+  \label{eq:path}
+  \begin{split}
+\pi = (4, 9, {critA}={False},{critB}=False) \rightarrow \\
+(6, 9, {critA}={True},{critB}=False) \rightarrow \\
+(7, 9, {critA}={False},{critB}=False) \rightarrow \\
+(7, 11, {critA}={False},{critB}=True) \rightarrow \\
+(7, 12, {critA}={False},{critB}=False)
+  \end{split}
+\end{equation}
+
+In diesem Beispiel k"onnen die beiden Bool-Variablen \verb|critA| und \verb|critB| als atomic proposition verwendet werden. Die Menge der atomic propositions $AP$ in diesem Beispiel ist
+\[
+\text{AP}=\{critA, critB\}
+\]
+
+Der Trace zu einem zur sequence \ref{eq:path} ist das Wort
+\[
+trace(\pi) = \varnothing \{critA\} \varnothing \{critB\} \varnothing
+\]
+
+\subsection{Linear-Time Properties}
+\label{sec:satisfactionrelations}
+
+Linear-time Properties legen fest welche W"orter von einem System akzeptiert werden d"urfen. Ein Linear-time property ist eine Sprache "uber dem Alphabet $2^{AP}$.
+Wenn $P$ ein LT Property und $S$ das modellierte System ist, dann erf"ullt $S$ $P$ (man schreibt $S \models P$) wenn Traces(TS) $ Traces(S) \subseteq P $
+
+\[
+TS \models P \iff Traces(S) \subseteq P 
+\]
+
+$ \models $ ist eine satisfaction relation. 
+
+
+\subsection{Linear Temporal Logic}
+\label{sec:lineartemporallogic}
+
+
+Ein LTL-Formel besteht atomic propositions, die mit Operatoren der Aussagenlogik  und der temporal logic verkn"upft werden.
+
+
+\begin{table}
+  \centering
+
+  \begin{tabular}{l l l}
+    Operator & Math & Spin \\
+    not & $\neg$ & \verb|!| \\
+    and & $\land$ & \verb|&&| \\
+  \end{tabular}
+  \caption{Operators of propositional logic }
+  \label{tab:operators_of_propositionallogic}
+\end{table}
+
+Mit atomic propositions kann man nur "uberpr"ufen, ob ein property in einem gegebenen state $s$ wahr oder falsch ist. M"ochte man beispielsweise mutual exlusion in Program \ref{lst:withoutsemaphore} ausdr"ucken, ben"otigt man Operatoren, die sich auf alle m"oglichen states beziehen. Temporal operators erm"oglichen solche Aussagen (siehe Tabelle \ref{tab:temporal_operators}). 
+
+\begin{table}
+  \centering
+  \begin{tabular}{l l l}
+    Operator & Math & Spin \\
+    always & $\square$ & \verb|[]| \\
+    and & $\lozenge$ & \verb|<>| \\
+  \end{tabular}
+  \caption{Temporal operators }
+  \label{tab:temporal_operators}
+\end{table}
+
+
+
+Linear-time Properties k"onnen in Safety-, Liveness- und Fairness-Properties unterteilt werden.
+
+\subsection{Safety-properties}
+\label{sec:safety}
+
+Ein Safety-Property verifiziert, ob ein System unerw"unschte states enth"alt. Mutual exlusion kann mit einem Safety-Property verifiziert werden. Ein Safety-Property $P_{mutex}$ um mutual exlusion im System aus Listing \ref{lst:criticalsection} sicherzustellen, definiert eine Sprache in der keine W"orter mit $\{critA,critB\}$ vorkommen d"urfen. Formell:
+\[
+P_{mutex} = \text{Menge aller W"orter} A_0 A_1 A_2 \dots \text{mit} \{critA,critB\} \not{\subseteq} A_i \text{ f"ur alle} 0 \leq i
+\]
+
+Oder mit LTL:
+\[
+\square \neg (critA,critB)
+\]
+
+\subsection{Liveness-Properties}
+\label{sec:liveness}
+
+Safety-Properties definieren, dass in einer Sprache bestimmte Prefixe nicht vorkommen. Ein System $S$ das nichts tun w"urde, dass heisst $Traces(S)=\varnothing$ w"urde jedes Safety-Property erf"ullen. Fortschritt muss auch verfiziert werden k"onnen. Liveness-Properties definieren, dass jeder Trace in einem System erweitert werden kann, sodass das resultierende Wort das Liveness-Property erf"ullt.
+
+\todo{Starvation Beispiel f"ur Liveness machen}
+
+\subsection{Fairness}
+\label{sec:fairness}
+
+\todo{etwas zu Fairness schreiben}
+
+\subsection{Verifying LTL-properties in Spin}
+\label{sec:verifying_ltl-properties}
+
+\todo{Bedienunganleitung f"ur SpinVerifizierer schreiben}
+
+\appendix
+
+\section{Notizen}
+
+$Traces(TS)$ beichnet die Menge aller Traces des initial states von $TS$.
+
+ Ein Transition System hat mehrere m"ogliche Abfolgen von states. Jedem state k"onnen atomic propositions zugeordnet werden, die in $s$ wahr sind. Dass heisst ein trace ist eine sequence von atomic propositions. Da ein Transition System mehrere Abfolgen von states haben kann, hat es auch mehrere traces.
+
+Ein $P$ ist im ebenfalls definert als Menge von W"ortern "uber $2^{AP}$. Wenn die Traces von $TS$ eine Teilmenge der Traces von $P$ sind, erf"ullt $TS$ die in $P$ definierten Anforderungen.
+
+Eine Evalation ist eine Zuordnung also eine Function. Sie ordnet den Atomic Propositions 0 oder 1 zu. 
+
+
+
+
+
+\begin{thebibliography}{9}
+\bibitem{baier08}
+Christel Baier Joost-Pieter Katoen,
+Principles of Model Checking,
+The MIT Press,
+2008.
+
+\bibitem{holzmann03}
+Gerald Holzmann,
+The Spin Model Checker: Primer and Reference Manual,
+Addison-Wesley Professional,
+2003.
+\end{thebibliography}
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "master"
+%%% End: 
