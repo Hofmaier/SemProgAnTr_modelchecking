@@ -157,7 +157,7 @@ Die Verhaltensmodelle aus Abschnitt \ref{sec:interleaving} koennen in einer Simu
 
 Da es in einem System $S$ mehrere Ausfuehungspfade geben kann, kann es auch mehrere Traces geben. Alle Traces eines System $S$ bezeichnet man $Traces(S)$. $Traces(S)$ definiert eine Sprache.
 
-Anhand von Listing \ref{lst:criticalsection} werden nachfolgend ein m"gliche sequence von states und ein Trace gezeigt.
+Anhand von Listing \ref{lst:criticalsection} wird nachfolgend eine m"ogliche sequence von states und ein Trace gezeigt.
 
 \lstinputlisting[label=lst:criticalsection,caption={Critical section problem},numbers=left]{criticalsection.pml}
 
@@ -189,7 +189,7 @@ trace(\pi) = \varnothing \{critA\} \varnothing \{critB\} \varnothing
 \label{sec:satisfactionrelations}
 
 Linear-time Properties legen fest welche W"orter von einem System akzeptiert werden d"urfen. Ein Linear-time property ist eine Sprache "uber dem Alphabet $2^{AP}$.
-Wenn $P$ ein LT Property und $S$ das modellierte System ist, dann erf"ullt $S$ $P$ (man schreibt $S \models P$) wenn Traces(TS) $ Traces(S) \subseteq P $
+Wenn $P$ ein LT Property und $S$ das modellierte System ist, dann erf"ullt $S$ $P$ (man schreibt $S \models P$) wenn Traces(S) $ Traces(S) \subseteq P $
 
 \[
 TS \models P \iff Traces(S) \subseteq P 
@@ -201,9 +201,7 @@ $ \models $ ist eine satisfaction relation.
 \subsection{Linear Temporal Logic}
 \label{sec:lineartemporallogic}
 
-
 Ein LTL-Formel besteht atomic propositions, die mit Operatoren der Aussagenlogik  und der temporal logic verkn"upft werden.
-
 
 \begin{table}
   \centering
@@ -230,8 +228,6 @@ Mit atomic propositions kann man nur "uberpr"ufen, ob ein property in einem gege
   \label{tab:temporal_operators}
 \end{table}
 
-
-
 Linear-time Properties k"onnen in Safety-, Liveness- und Fairness-Properties unterteilt werden.
 
 \subsection{Safety-properties}
@@ -239,7 +235,7 @@ Linear-time Properties k"onnen in Safety-, Liveness- und Fairness-Properties unt
 
 Ein Safety-Property verifiziert, ob ein System unerw"unschte states enth"alt. Mutual exlusion kann mit einem Safety-Property verifiziert werden. Ein Safety-Property $P_{mutex}$ um mutual exlusion im System aus Listing \ref{lst:criticalsection} sicherzustellen, definiert eine Sprache in der keine W"orter mit $\{critA,critB\}$ vorkommen d"urfen. Formell:
 \[
-P_{mutex} = \text{Menge aller W"orter} A_0 A_1 A_2 \dots \text{mit} \{critA,critB\} \not{\subseteq} A_i \text{ f"ur alle} 0 \leq i
+P_{mutex} = \text{Menge aller W"orter} A_0 A_1 A_2 \dots \text{mit } \{critA,critB\} \not \subseteq A_i \text{ f"ur alle } 0 \leq i
 \]
 
 Oder mit LTL:
@@ -247,11 +243,21 @@ Oder mit LTL:
 \square \neg (critA,critB)
 \]
 
+Ein Modelchecker "uberpr"uft, ob Traces(S) eines Systems $S$ ein Wort (trace) enth"alt, dass die Anforderung des definierten Property nicht erf"ullt.
+
 \subsection{Liveness-Properties}
 \label{sec:liveness}
 
 Safety-Properties definieren, dass in einer Sprache bestimmte Prefixe nicht vorkommen. Ein System $S$ das nichts tun w"urde, dass heisst $Traces(S)=\varnothing$ w"urde jedes Safety-Property erf"ullen. Fortschritt muss auch verfiziert werden k"onnen. Liveness-Properties definieren, dass jeder Trace in einem System erweitert werden kann, sodass das resultierende Wort das Liveness-Property erf"ullt.
 
+Ein Liveness-Property fordert, dass sich gewisse events unendlich oft wiederholen. Liveness-Properties k"onnen nur von einem infiniten Trace erf"ullt werden. 
+
+Starvation freedom ist ein Liveness Property. Starvation freedom fordert, dass jeder wartende Process eventuell seine critical section betritt. In einem infiniten Trace gibt es kein Prefix, dass starvation freedom verletzt. Aufgrund eines Prefix in einem infinten Trace kann man nicht "uberpr"ufen, ob ein Sachverhalt in Zukunft eintreten wird.
+
+Formell kann man starvation freedom folgendermassen ausdr"ucken.
+\[
+P_{Starv} = \text{Menge aller infiniten W"orter } A_0 A_1 \dots A_j \in AP \text{ so dass }\exists j \geq 0. critA \in A_j
+\]
 \todo{Starvation Beispiel f"ur Liveness machen}
 
 \subsection{Fairness}
