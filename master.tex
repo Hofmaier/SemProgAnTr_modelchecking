@@ -258,7 +258,15 @@ Formell kann man starvation freedom folgendermassen ausdr"ucken.
 \[
 P_{Starv} = \text{Menge aller infiniten W"orter } A_0 A_1 \dots A_j \in AP \text{ so dass }\exists j \geq 0. critA \in A_j
 \]
-\todo{Starvation Beispiel f"ur Liveness machen}
+
+Die LTL-Formel von $P_{Starv}$ lautet:
+\[
+\lozenge critA
+\]
+
+Listing \ref{lst:starvation} zeigt ein System bei dem starvation freedom nicht erf"ullt ist. Process A versucht den \verb|mutexB| mit einem Spinlock zu erlangen. Es In diesem System gibt es Traces, bei denen Process A in einem unendliche Loop versucht \verb|mutexB| zu erlangen und so nie in die eigene critical section kommt. Ein solcher Trace erf"ullt das LTL-Property \verb|<>critA| nicht.
+
+\lstinputlisting[label={lst:starvation},caption={Critical section with starvation},numbers=left, language=Promela]{starvation.pml}
 
 \subsection{Fairness}
 \label{sec:fairness}
@@ -281,10 +289,6 @@ $Traces(TS)$ beichnet die Menge aller Traces des initial states von $TS$.
 Ein $P$ ist im ebenfalls definert als Menge von W"ortern "uber $2^{AP}$. Wenn die Traces von $TS$ eine Teilmenge der Traces von $P$ sind, erf"ullt $TS$ die in $P$ definierten Anforderungen.
 
 Eine Evalation ist eine Zuordnung also eine Function. Sie ordnet den Atomic Propositions 0 oder 1 zu. 
-
-
-
-
 
 \begin{thebibliography}{9}
 \bibitem{baier08}

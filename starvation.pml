@@ -1,12 +1,32 @@
+bool mutexA = 1;
+bool mutexB = 1;
 bool critA = false;
-bool critB = false;
 active proctype A(){
-	 critA = True;
+       do
+       ::mutexA--;
+	 do
+	 ::(mutexB == 0) ->
+	  mutexA++;
+	  mutexA--
+	  ::else -> break
+	  od;
+	  critA = true;
 	 //inside critical section
-	 critA = False
+	 critA = true;
+	 mutexA++;
+	 critA = false
+	od
 }
 active proctype B(){
-	 critB = True;
-	 //inside critical section
-	 critB = False
+       do
+       ::mutexB--;
+	 do
+	 ::(mutexA == 0) ->
+	  mutexB++;
+	  mutexB--
+	  ::else -> break
+	  od;
+       //inside critical section
+       mutexB++
+       od
 }
