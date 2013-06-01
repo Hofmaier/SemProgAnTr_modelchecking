@@ -143,11 +143,25 @@ In Abschnitt \ref{sec:ltl} wird beschrieben, wie Spin Deadlocks in Modellen find
 \subsection{Atomic Propositions}
 \label{sec:atomicpropositions}
 
-Atomic propositions sind Aussagen, die wahr oder falsch sein k"onnen. Eine boolean expression ist eine atomic proposition. Sie werden zu \verb|True| oder \verb|False| evaluiert. Die Evaluation ist vom state in dem sich das System zu einem Zeitpunkt befindet abh"angig. Der Ausdruck \verb|crit < 2| ist eine atomic proposition.
+Atomic propositions sind Aussagen, die wahr oder falsch sein k"onnen. Eine boolean expression ist eine atomic proposition. Sie werden zu \verb|True| oder \verb|False| evaluiert. Die Evaluation ist vom state in dem sich das System zu einem Zeitpunkt befindet abh"angig. Der Ausdruck \verb|crit < 2| ist eine atomic proposition. Atomic propositions k"onnen durch Bezeichner ersetzt werden. Beispielweise k"onnte man die Aussage "Process \verb|TakeAFirst| hat \verb|mutexA| erhalten und wartet darauf, dass \verb|mutexB| frei wird" "uber das 
+System aus Listing \ref{list:deadlock} mit $waitA$ bezeichnen. Dieses Beispiel wird in Abschnitt wiederverwendet um Deadlockfreiheit zu beschreiben.
 
 Die Menge $AP$ definiert die Menge aller atomic propositions eines Systems. Jedem State kann man eine Menge g"ultiger atomic propositions zuordnen. Die Teilmenge ist enthalten in $2^{AP}$.
  
 Atomic propositions k"onnen mit den Operatoren der Aussagenlogik (siehe Tabelle \ref{tab:operators_of_propositionallogic}) verkn"upft werden.
+
+
+\begin{table}
+  \centering
+
+  \begin{tabular}{l l l}
+    Operator & Math & Spin \\
+    not & $\neg$ & \verb|!| \\
+    and & $\land$ & \verb|&&| \\
+  \end{tabular}
+  \caption{Operators of propositional logic }
+  \label{tab:operators_of_propositionallogic}
+\end{table}
 
 \subsection{Traces}
 \label{sec:traces}
@@ -196,51 +210,30 @@ TS \models P \iff Traces(S) \subseteq P
 
 $ \models $ ist eine satisfaction relation. 
 
-
-\subsection{Linear Temporal Logic}
-\label{sec:lineartemporallogic}
-
-Ein LTL-Formel besteht atomic propositions, die mit Operatoren der Aussagenlogik  und der temporal logic verkn"upft werden.
-
-\begin{table}
-  \centering
-
-  \begin{tabular}{l l l}
-    Operator & Math & Spin \\
-    not & $\neg$ & \verb|!| \\
-    and & $\land$ & \verb|&&| \\
-  \end{tabular}
-  \caption{Operators of propositional logic }
-  \label{tab:operators_of_propositionallogic}
-\end{table}
-
-Mit atomic propositions kann man nur "uberpr"ufen, ob ein property in einem gegebenen state $s$ wahr oder falsch ist. M"ochte man beispielsweise mutual exlusion in Program \ref{lst:withoutsemaphore} ausdr"ucken, ben"otigt man Operatoren, die sich auf alle m"oglichen states beziehen. Temporal operators erm"oglichen solche Aussagen (siehe Tabelle \ref{tab:temporal_operators}). 
-
-\begin{table}
-  \centering
-  \begin{tabular}{l l l}
-    Operator & Math & Spin \\
-    always & $\square$ & \verb|[]| \\
-    and & $\lozenge$ & \verb|<>| \\
-  \end{tabular}
-  \caption{Temporal operators }
-  \label{tab:temporal_operators}
-\end{table}
-
-Linear-time Properties k"onnen in Safety-, Liveness- und Fairness-Properties unterteilt werden.
+Linear-time Properties k"onnen in Safety-, Liveness- und Fairness-Properties unterteilt werden. In den Abschnitten \ref{sec:safety} und \ref{sec:liveness} werden Safety- und Liveness-Properties erkl"art.
 
 \subsection{Safety-properties}
 \label{sec:safety}
 
-Ein Safety-Property verifiziert, ob ein System unerw"unschte states enth"alt. Mutual exlusion kann mit einem Safety-Property verifiziert werden. Ein Safety-Property $P_{mutex}$ um mutual exlusion im System aus Listing \ref{lst:criticalsection} sicherzustellen, definiert eine Sprache in der keine W"orter mit $\{critA,critB\}$ vorkommen d"urfen. Formell:
+Ein Safety-Property verifiziert, ob ein System unerw"unschte states enth"alt. 
+
+Deadlock ist ein safety property. Deadlockfreiheit im System aus Listing \ref{list:deadlock} kann wie folgt als safety property definiert werden. Die atomic propositions $waitA$ und $waitB$ bezeichnen die Zust"ande, dass die processes \verb|TakeBFirst| und \verb|TakeAFirst| jeweils auf die anderen Mutex warten. Dann muss die Aussagenlogikformel  $\phi=\neg waitA \lor \neg waitB$ in jedem state True sein. Formell:
+
+\[
+P_{dlock} = {A_0 A_1 A_2 \dots \in (2^{AP})^{\omega} | \forall \geq i.   A_i \models \phi}
+\]
+
+wobei $(2^{AP})^{\omega}$ die Menge aller m"oglichen W"orter "uber $2^{AP}$ ist.
+
+Auch Mutual exlusion kann mit einem Safety-Property verifiziert werden. Ein Safety-Property $P_{mutex}$ um mutual exlusion im System aus Listing \ref{lst:criticalsection} sicherzustellen, definiert eine Sprache in der keine W"orter mit $\{critA,critB\}$ vorkommen d"urfen. Formell:
 \[
 P_{mutex} = \text{Menge aller W"orter} A_0 A_1 A_2 \dots \text{mit } \{critA,critB\} \not \subseteq A_i \text{ f"ur alle } 0 \leq i
 \]
-
-Oder mit LTL:
 \[
-\square \neg (critA,critB)
+ = {A_0 A_1 A_2 \dots \in (2^{AP})^{\omega} | \forall \geq i.   A_i \models \neg critA \lor \neg critB}
 \]
+
+
 
 Ein Modelchecker "uberpr"uft, ob Traces(S) eines Systems $S$ ein Wort (trace) enth"alt, dass die Anforderung des definierten Property nicht erf"ullt.
 
@@ -257,21 +250,51 @@ Formell kann man starvation freedom folgendermassen ausdr"ucken.
 \[
 P_{Starv} = \text{Menge aller infiniten W"orter } A_0 A_1 \dots A_j \in AP \text{ so dass }\exists j \geq 0. critA \in A_j
 \]
-
-Die LTL-Formel von $P_{Starv}$ lautet:
 \[
-\lozenge critA
+ = { A_0 A_1 \dots A_j \in (2^{AP})^{\omega} \exists j \geq 0. critA \in A_j}
 \]
 
 Listing \ref{lst:starvation} zeigt ein System $S_{Spinlock}$ bei dem starvation freedom nicht erf"ullt ist. Process A versucht den \verb|mutexB| mit einem Spinlock zu erlangen. In diesem System gibt es Traces, bei denen Process A in einem unendliche Loop versucht \verb|mutexB| zu erlangen und so nie in die eigene critical section kommt. Ein solcher Trace erf"ullt das LTL-Property \verb|<>critA| nicht. $S_{Spinlock}$ erf"ullt $P_{Starv}$ nicht.
 
-\lstinputlisting[label={lst:starvation},caption={Critical section with starvation},numbers=left, language=Promela]{starvation.pml}
+\lstinputlisting[label={lst:starvation},caption={Critical section with starvation},numbers=left, language=Promela,float]{starvation.pml}
 
-\subsection{Fairness}
-\label{sec:fairness}
+\subsection{Linear Temporal Logic}
+\label{sec:lineartemporallogic}
 
-\todo{etwas zu Fairness schreiben?}
+M"ochte man ein Model, dass in Promela definiert ist, von Spin verifizieren lassen, muss man Spin das Model als Promela Source Code und die Definition eines Correctness-Property geben. Die Safety und Liveness-Properties aus Abschnitt \ref{sec:safety} und \ref{sec:liveness} sind ungeeignet f"ur die Eingabe. Linear Temporal Logic ist ein Formalismus mit dem Correctness Properties einfacher formuliert werden K"onnen.
 
+Ein LTL-Formel besteht aus atomic propositions, die mit Operatoren der Aussagenlogik  und der temporal logic verkn"upft werden.
+
+Mit atomic propositions kann man nur "uberpr"ufen, ob ein property in einem gegebenen state $s$ wahr oder falsch ist. M"ochte man beispielsweise mutual exlusion in Program \ref{lst:withoutsemaphore} ausdr"ucken, ben"otigt man Operatoren, die sich auf alle m"oglichen states beziehen. Temporal operators erm"oglichen solche Aussagen (siehe Tabelle \ref{tab:temporal_operators}). Die Formel k"onnen mit ASCI-Character ausgedr"uckt werden. Diese Form eignet sich f"ur die Eingabe von Spin.
+
+\begin{table}
+  \centering
+  \begin{tabular}{l l l}
+    Operator & Math & Spin \\
+    always & $\square$ & \verb|[]| \\
+    and & $\lozenge$ & \verb|<>| \\
+  \end{tabular}
+  \caption{Temporal operators }
+  \label{tab:temporal_operators}
+\end{table}
+
+Das Mutual Exlusion Safetyproperty $P_{mutex}$ aus Abschnitt \ref{sec:safety} kann in LTL pr"agnanter definiert werden
+\[
+  {A_0 A_1 A_2 \dots \in (2^{AP})^{\omega} | \forall \geq i.   A_i \models \neg critA \lor \neg critB}
+\]
+
+\[
+= \square \neg (critA,critB)
+\]
+
+Das Livenessproperty $P_{Starv}$ f"ur Starvation freedom wird in LTL wie folgt definiert:
+\[
+ { A_0 A_1 \dots A_j \in (2^{AP})^{\omega} \exists j \geq 0. critA \in A_j}
+\]
+
+\[
+= \lozenge critA
+\]
 \appendix
 
 \section{Notizen}
