@@ -8,6 +8,7 @@
 \usepackage{glossaries}
 \usepackage{amsmath,amssymb}
 \usepackage{todonotes}
+\usepackage{placeins}
 
 \begin{document}
 
@@ -57,11 +58,10 @@ Das keyword \verb|active| veranlasst Spin eine Instanz des folgenden process typ
 
 Listing \ref{lst:interleavingcode} zeigt ein System in dem genau ein Prozess gestarted wird. Die statements in Prozess \verb|sequential| werden sequenziel ausgef"uhrt. Es wird eine Prozessinstanz vom type process \verb|sequential| erzeugt. Diese liest den Wert der globalen Variablen \verb|x|, addiert $2$ dazu und speichert das Resultat in der Variablen \verb|temp|. Danach wird der Wert in \verb|temp| \verb|x| zugewiesen. Die Reihenfolge der States, die das System einnehmen kann ist eindeutig. Das Statediagram dazu wird in Abbildung \ref{fig:sequencielstatediagram} gezeigt. Die Reihenfolge der statements ist eindeutig.
 
-\begin{figure}
-  \centering
- \lstinputlisting[label={lst:interleavingcode},caption={System with a single process},numbers=left]{sequential.pml}  
+
+ \lstinputlisting[float,label={lst:interleavingcode},caption={System with a single process},numbers={left},float,language=Promela]{sequential.pml}  
   \label{fig:interleavinglisting}
-\end{figure}
+
 
 \begin{figure}
   \centering
@@ -76,16 +76,11 @@ Listing \ref{lst:interleavingcode} zeigt ein System in dem genau ein Prozess ges
   \label{fig:sequencielstatediagram}
 \end{figure}
 
-Werden Programme concurrent ausgef"uhrt, gibt es mehrere M"oglichkeiten, in welcher Reihenfolge die Statements ausgef"uhrt werden. Es unterschiedliche Abfolgen von states m"oglich. Bei jedem "Ubergang wird nondeterministic entschieden, welcher Process als n"achstes ausgef"uhrt wird. Das zusammenf"uhren der Statements beider Process zu einer sequenziellen Abfolge nennt man Interleaving.  Listing \ref{list:interleaving2proc} zeigt ein Program bei dem 2 Processe $A$ und $B$ concurrent ausgef"uhrt werden. Das Statediagram wird Abbildung \ref{fig:interleavingtransitionsystem} gezeigt.
+Werden Programme concurrent ausgef"uhrt, gibt es mehrere M"oglichkeiten, in welcher Reihenfolge die Statements ausgef"uhrt werden. Es unterschiedliche Abfolgen von states m"oglich. Bei jedem "Ubergang wird nondeterministic entschieden, welcher Process als n"achstes ausgef"uhrt wird. Das zusammenf"uhren der Statements beider Process zu einer sequenziellen Abfolge nennt man Interleaving. Interleaving ist die Enumeration aller m"oglichen statement Reihenfolgen. Listing \ref{list:interleaving2proc} zeigt ein Program bei dem 2 Processe $A$ und $B$ concurrent ausgef"uhrt werden. Das Statediagram wird Abbildung \ref{fig:interleavingtransitionsystem} gezeigt.
+
+\lstinputlisting[label=list:interleaving2proc, caption={Add operation with 2 processes},numbers=left,float,language=Promela]{interleavingproc.pml}  
 
 \begin{figure}
-  \centering
-\lstinputlisting[label=list:interleaving2proc,caption={Add operation with 2 processes},numbers=left]{interleavingproc.pml}  
-\end{figure}
-
- \begin{figure}
-   \centering
-
  \begin{tikzpicture}[node distance=2.5cm, on grid, auto]
 \tikzstyle{every node}=[font=\tiny]
    \node[state, initial, rectangle, align=left](s1){$x=0$\\$tempA=0$\\$tempB=0$};
@@ -126,7 +121,7 @@ Das Statediagram in Abbildung \ref{fig:interleavingtransitionsystem} zeigt, dass
 
 Listing \ref{lst:withoutsemaphore} zeigt ein Programm, in dem zwei Prozesse concurrent gestartet werden und zum Wert der Variablen $x$ den Wert $2$ dazuz"ahlen. Wenn man erzwingen m"ochte, dass das Programm mit dem Wert $4$ in $x$ terminiert, muss man die Prozesse synchronisieren. Die Prozesse m"ussen so synchronisiert werden, dass jeweils nur ein Prozess in der critical section (line 4-6) ist. Eine M"oglichkeit um mutal exclusion zu erreichen ist der Einsatz von Semaphoren. Listing \ref{list:withsemaphore} zeigt ein Programm wie mutual exlusion mit einer Semaphore erreicht wird. Wenn dieses Programm terminiert, hat die Variable $x$ immer den Wert $4$.
 
-\lstinputlisting[label={lst:withoutsemaphore},caption={Program without mutual exlusion}, numbers=left]{withoutsemaphore.pml}
+\lstinputlisting[label={lst:withoutsemaphore},caption={Program without mutual exlusion}, numbers=left,float]{withoutsemaphore.pml}
 
 \lstinputlisting[label=list:withsemaphore,numbers=left,caption=Semaphore]{semaphore.pml}
 
@@ -139,7 +134,7 @@ In Abschnitt \ref{sec:ltl} wird beschrieben, wie Spin Deadlocks in Modellen find
 \section{Linear Temporal Logic}
 \label{sec:ltl}
 
- Der Sachverhalt kann mit Linear Temporal Logic beschrieben werden. Dieser Abschnitt erkl"art LTL. Ein Sachverhalt ist zum Beispiel, ob ein Model keine Deadlocks enth"alt. Die Eigenschaft, dass ein Model keinen Deadlock enth"alt, kann mit LTL formalisiert werden. Zuerst werden atomic propositions beschrieben, da sie ein Bestandteil einer LTL-Formel sind. LTL-Formel spezifizieren Linear-Time Properties. Diese wiederrum akzeptieren Traces. Deshalb wird auch erkl"rt was Traces und Linear Time Properties sind.
+ Der Sachverhalt kann mit Linear Temporal Logic beschrieben werden. Dieser Abschnitt erkl"art LTL. Ein Sachverhalt ist zum Beispiel, ob ein Model keine Deadlocks enth"alt. Die Eigenschaft, dass ein Model keinen Deadlock enth"alt, kann mit LTL formalisiert werden. Zuerst werden atomic propositions beschrieben, da sie ein Bestandteil einer LTL-Formel sind. LTL-Formel spezifizieren Linear-Time Properties. Sogenannte Traces von Systemen k"onnen mit Linear-Time Properties "uberpr"uft werden. Deshalb wird auch erkl"art was Traces und Linear Time Properties sind.
 
 \subsection{Atomic Propositions}
 \label{sec:atomicpropositions}
@@ -264,19 +259,14 @@ Die LTL-Formel von $P_{Starv}$ lautet:
 \lozenge critA
 \]
 
-Listing \ref{lst:starvation} zeigt ein System bei dem starvation freedom nicht erf"ullt ist. Process A versucht den \verb|mutexB| mit einem Spinlock zu erlangen. Es In diesem System gibt es Traces, bei denen Process A in einem unendliche Loop versucht \verb|mutexB| zu erlangen und so nie in die eigene critical section kommt. Ein solcher Trace erf"ullt das LTL-Property \verb|<>critA| nicht.
+Listing \ref{lst:starvation} zeigt ein System $S_{Spinlock}$ bei dem starvation freedom nicht erf"ullt ist. Process A versucht den \verb|mutexB| mit einem Spinlock zu erlangen. In diesem System gibt es Traces, bei denen Process A in einem unendliche Loop versucht \verb|mutexB| zu erlangen und so nie in die eigene critical section kommt. Ein solcher Trace erf"ullt das LTL-Property \verb|<>critA| nicht. $S_{Spinlock}$ erf"ullt $P_{Starv}$ nicht.
 
 \lstinputlisting[label={lst:starvation},caption={Critical section with starvation},numbers=left, language=Promela]{starvation.pml}
 
 \subsection{Fairness}
 \label{sec:fairness}
 
-\todo{etwas zu Fairness schreiben}
-
-\subsection{Verifying LTL-properties in Spin}
-\label{sec:verifying_ltl-properties}
-
-\todo{Bedienunganleitung f"ur SpinVerifizierer schreiben}
+\todo{etwas zu Fairness schreiben?}
 
 \appendix
 
