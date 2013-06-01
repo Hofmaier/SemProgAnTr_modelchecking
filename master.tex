@@ -49,7 +49,7 @@ Promela dient Abstraktionen von Systemen (abstractions of systems designs) zu be
 
 Die Syntax zur Deklaration der Variablen ist "ahnlich wie in der Programmiersprache C. In den nachfolgenden Beispielen wird nur der Datentyp byte verwendet.
 
-Mit dem keyword \verb|proctype| ein process type definiert. Auf \verb|proctype| folgen der Bezeichner und in Klammer \verb|{}| die statements des process type. \cite{holzmann03}
+Mit dem keyword \verb|proctype| wird ein process type definiert. Auf \verb|proctype| folgen der Bezeichner und in Klammer \verb|{}| die statements des process type. \cite{holzmann03}
 
 Das keyword \verb|active| veranlasst Spin eine Instanz des folgenden process type zu erstellen. Der Prozess startet sofort. 
 
@@ -119,19 +119,23 @@ Das Statediagram in Abbildung \ref{fig:interleavingtransitionsystem} zeigt, dass
 \subsubsection{Synchronization}
 \label{sec:synchronization}
 
-Listing \ref{lst:withoutsemaphore} zeigt ein Programm, in dem zwei Prozesse concurrent gestartet werden und zum Wert der Variablen $x$ den Wert $2$ dazuz"ahlen. Wenn man erzwingen m"ochte, dass das Programm mit dem Wert $4$ in $x$ terminiert, muss man die Prozesse synchronisieren. Die Prozesse m"ussen so synchronisiert werden, dass jeweils nur ein Prozess in der critical section (line 4-6) ist. Eine M"oglichkeit um mutal exclusion zu erreichen ist der Einsatz von Semaphoren. Listing \ref{list:withsemaphore} zeigt ein Programm wie mutual exlusion mit einer Semaphore erreicht wird. Wenn dieses Programm terminiert, hat die Variable $x$ immer den Wert $4$.
+Listing \ref{lst:withoutsemaphore} zeigt ein Programm, in dem zwei Prozesse concurrent gestartet werden und zum Wert der Variablen $x$ den Wert $2$ dazuz"ahlen. Wenn man erzwingen m"ochte, dass das Programm mit dem Wert $4$ in $x$ terminiert, muss man die Prozesse synchronisieren. Die Prozesse m"ussen so synchronisiert werden, dass jeweils nur ein Prozess in der critical section (line 4-6) ist. Eine M"oglichkeit um mutal exclusion zu erreichen ist der Einsatz von Semaphoren. Listing \ref{lst:withsemaphore} zeigt ein Programm wie mutual exlusion mit einer Semaphore erreicht wird. Wenn dieses Programm terminiert, hat die Variable $x$ immer den Wert $4$.
 
-\lstinputlisting[label={lst:withoutsemaphore},caption={Program without mutual exlusion}, numbers=left,float]{withoutsemaphore.pml}
+\lstinputlisting[label={lst:withoutsemaphore},caption={Program without mutual exlusion}, numbers=left,float,language=Promela]{withoutsemaphore.pml}
 
-\lstinputlisting[label=list:withsemaphore,numbers=left,caption=Semaphore]{semaphore.pml}
+Der Test \verb|x<0| und die nachfolgende \verb|x--| Operation m"ussen atomar ausgef"uhrt werden, damit die \verb|request_semaphore| Operation der Semaphore funktionert. In Promela werden sequenzen von statements atomar ausgef"uhrt, in dem man die statements innerhalb geschweifter Klammer mit vorangestelltem \verb|atomic| schreibt.
 
-Werden in einem Programm mehrere Lock verwendet, kann es zu einem Deadlock kommen. Listing \ref{list:deadlock} zeigt ein Programm, bei dem es zu einem Deadlock kommen kann. Wenn Process \verbTakeAFirst die Semaphore $A$ decrementiert und gleich danach unterbrochen wird und Process \verbTakeBFirst unmittelbar danach Semaphore $B$ dekrementiert, kann keiner der beiden Processe weiterfahren, weil die ben"otigte Resource gelockt ist.
+Boolsche expressions, wie \verb|x<0|, ohne assigment, blockieren Prozesse wenn die expression zu False evaluiert bis sie zu true evaluiert wird.
+
+\lstinputlisting[label={lst:withsemaphore},numbers=left,float,language=Promela,caption={Mutual exlusion with semaphores}]{semaphore.pml}
+
+Werden in einem Programm mehrere Locks verwendet, kann es zu einem Deadlock kommen. Listing \ref{list:deadlock} zeigt ein Programm, bei dem es zu einem Deadlock kommen kann. Wenn Process \verbTakeAFirst die Semaphore $A$ decrementiert und gleich danach unterbrochen wird und Process \verbTakeBFirst unmittelbar danach Semaphore $B$ dekrementiert, kann keiner der beiden Processe weiterfahren, weil die ben"otigte Resource gelockt ist.
 
 In Abschnitt \ref{sec:ltl} wird beschrieben, wie Spin Deadlocks in Modellen findet.
 
-\lstinputlisting[label=list:deadlock,numbers=left]{deadlock.pml}
+\lstinputlisting[label=list:deadlock,numbers=left,float,language=Promela,caption={Synchronization with deadlock}]{deadlock.pml}
 
-\section{Linear Temporal Logic}
+\section{Correctness Properties}
 \label{sec:ltl}
 
  Der Sachverhalt kann mit Linear Temporal Logic beschrieben werden. Dieser Abschnitt erkl"art LTL. Ein Sachverhalt ist zum Beispiel, ob ein Model keine Deadlocks enth"alt. Die Eigenschaft, dass ein Model keinen Deadlock enth"alt, kann mit LTL formalisiert werden. Zuerst werden atomic propositions beschrieben, da sie ein Bestandteil einer LTL-Formel sind. LTL-Formel spezifizieren Linear-Time Properties. Sogenannte Traces von Systemen k"onnen mit Linear-Time Properties "uberpr"uft werden. Deshalb wird auch erkl"art was Traces und Linear Time Properties sind.

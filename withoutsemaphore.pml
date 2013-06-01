@@ -1,11 +1,11 @@
 byte x = 0;
 byte nrOfProcInCritSec=0;
 proctype WithoutSynchronization (){
-nrOfProcInCritSec++;
-byte temp;
-temp = x+2;
-x = temp ;
-nrOfProcInCritSec--;
+	 nrOfProcInCritSec++;
+	 byte temp;
+	 temp = x+2;
+	 x = temp ;
+	 nrOfProcInCritSec--;
 }
 init{
 atomic{
