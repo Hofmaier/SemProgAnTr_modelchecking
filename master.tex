@@ -1,14 +1,12 @@
 \documentclass[11pt,twoside,a4paper]{article}
 
 \usepackage[utf8]{inputenc}
-
 \usepackage{listings}
 \usepackage{tikz}
 \usetikzlibrary{automata,positioning}
 \usepackage{glossaries}
 \usepackage{amsmath,amssymb}
 \usepackage{todonotes}
-
 
 \begin{document}
 
@@ -22,7 +20,7 @@
 \section{Model Checking}
 \label{sec:modelchecking}
 
-Ziel eines Modelcheckers ist es Modelle zu verifizieren. Das bedeutet, ein Modelchecker "uberpr"uft, ob f"ur ein gegebenes Model ein Sachverhalt wahr ist. Spin ist ein Modelchecker. Das Model wird in Promela beschrieben. Der Sachverhalt wird mit Linear Temporal Logic beschrieben. In diesem Abschnitt wird zuerst erkl"art, welche Vorteile Modelchecking gegen"uber anderen Verifikationmethoden bietet. Dann wird beschrieben wie Modelle mit der Sprache Promela erstellt werden und wie gew"unschte Eigenschaften dieser Modelle mit Linear Temporal Logic formalisiert werden.
+The Goal of a model checker is to verify behavioral models. That is, a model checker verifies whether a condition for a given model holds. Spin is a model checker. The model is described in Promela. Promela is a system specification language. The condition or property is described by linear temporal logic. In the next section model checking is compared to other verification methods. The section describes the advantages of model checking. The next next section explains how to use Promela to describe the behavior of a model. The next section describes correctness properties in general and how to define properties with temporal linear logic(LTL). Spin takes Promela source code and the LTL Properties as input and tells the user if the model holds for the defined properties.
 
 \subsection{Why Model Checking}
 \label{sec:why}
