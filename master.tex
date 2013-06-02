@@ -27,13 +27,13 @@ Ziel eines Modelcheckers ist es Modelle zu verifizieren. Das bedeutet, ein Model
 \subsection{Why Model Checking}
 \label{sec:why}
 
-Um Software zu verifizieren, gibt es unter anderem zwei M"oglichkeiten.
+Among others, there are two options to verify software
 \begin{description}
-\item[Peer reviewing] Der Code wird statisch analisiert. Da der Code nicht kompiliert und ausgef"uhrt wird, ist es schwierig Fehler durch Concurrency aufzudecken. Da es aber sehr einfach ist, wird es oft angewendet.
-\item[Software testing] Software wird kompiliert und ausgef"uhrt. Der Input wird so gew"ahlt, das bestimmte execution paths ausgef"uhrt werden. Der Output wird mit der Specification verglichen. Praktisch ist es nicht m"oglich alle Pfade durch Testing abzudecken. Man kann also damit zeigen, dass das System errors enth"alt aber nicht die Absenz von error.
+\item[Peer reviewing] Code is analyzed statically. Since the code is not compiled and executed, it is difficult to detect errors, caused by concurrency.
+\item[Software testing] Software is compiled and executed. The system reads explicitly defined input and a subset of all possible paths is executed. The Output is compared with the specification. Practically, it is impossible to cover all possible paths through testing. Testing can expose errors. It doesn't proofs the absence of errors.
 \end{description}
 
-Peer reviewing und Software testing sind beide nicht in der Lage 100\% aller F"alle zu verifizieren, weil nicht jeder m"ogliche State des Systems "uberpr"uft wird. Bei einer Model-based verification beschreibt, man alle m"oglichen States des Systems mit einem Model. Parallel zum Model definiert man so genannte property specifications. Ein Modelchecker verarbeitet Model und Properties und sagt, ob das Model die Properties befriedigt. Zus"atzlich ist ein Modelchecker in der Lage bei der Nichteinhaltung dieser Properties dem User ein Counterexample zu Pr"asentieren. Das ist eine Abfolge von States, die zu einem unerw"unschten State gef"uhrt haben \cite{baier08}.
+Peer reviewing and testing are both unable to verify 100\% of all possible cases. In a model-based verification a behavioral model is written and correctness properties are defined. A model checker processes the model and the properties and checks if the properties hold for the defined model. If the properties don't hold the model checker presents the user a counterexample. A counterexsample is a sequence of states which resulted in a undesirable state \cite{baier08}.
 
 \section{Modeling Concurrent Systems}
 \label{sec:concurrency}
