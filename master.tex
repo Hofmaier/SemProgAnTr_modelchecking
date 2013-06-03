@@ -1,14 +1,12 @@
 \documentclass[11pt,twoside,a4paper]{article}
 
 \usepackage[utf8]{inputenc}
-\usepackage[german]{babel}
 \usepackage{listings}
 \usepackage{tikz}
 \usetikzlibrary{automata,positioning}
 \usepackage{glossaries}
 \usepackage{amsmath,amssymb}
 \usepackage{todonotes}
-\usepackage{placeins}
 
 \begin{document}
 
@@ -22,28 +20,28 @@
 \section{Model Checking}
 \label{sec:modelchecking}
 
-Ziel eines Modelcheckers ist es Modelle zu verifizieren. Das bedeutet, ein Modelchecker "uberpr"uft, ob f"ur ein gegebenes Model ein Sachverhalt wahr ist. Spin ist ein Modelchecker. Das Model wird in Promela beschrieben. Der Sachverhalt wird mit Linear Temporal Logic beschrieben. In diesem Abschnitt wird zuerst erkl"art, welche Vorteile Modelchecking gegen"uber anderen Verifikationmethoden bietet. Dann wird beschrieben wie Modelle mit der Sprache Promela erstellt werden und wie gew"unschte Eigenschaften dieser Modelle mit Linear Temporal Logic formalisiert werden.
+The Goal of a model checker is to verify behavioral models. That is, a model checker verifies whether a condition for a given model holds. Spin is a model checker. The model is described in Promela. Promela is a system specification language. The condition or property is described by linear temporal logic. In the next section model checking is compared to other verification methods. The section describes the advantages of model checking. The next next section explains how to use Promela to describe the behavior of a model. The next section describes correctness properties in general and how to define properties with temporal linear logic(LTL). Spin takes Promela source code and the LTL Properties as input and tells the user if the model holds for the defined properties.
 
 \subsection{Why Model Checking}
 \label{sec:why}
 
-Um Software zu verifizieren, gibt es unter anderem zwei M"oglichkeiten.
+Among others, there are two options to verify software
 \begin{description}
-\item[Peer reviewing] Der Code wird statisch analisiert. Da der Code nicht kompiliert und ausgef"uhrt wird, ist es schwierig Fehler durch Concurrency aufzudecken. Da es aber sehr einfach ist, wird es oft angewendet.
-\item[Software testing] Software wird kompiliert und ausgef"uhrt. Der Input wird so gew"ahlt, das bestimmte execution paths ausgef"uhrt werden. Der Output wird mit der Specification verglichen. Praktisch ist es nicht m"oglich alle Pfade durch Testing abzudecken. Man kann also damit zeigen, dass das System errors enth"alt aber nicht die Absenz von error.
+\item[Peer reviewing] Code is analyzed statically. Since the code is not compiled and executed, it is difficult to detect errors, caused by concurrency.
+\item[Software testing] Software is compiled and executed. The system reads explicitly defined input and a subset of all possible paths is executed. The Output is compared with the specification. Practically, it is impossible to cover all possible paths through testing. Testing can expose errors. It doesn't proofs the absence of errors.
 \end{description}
 
-Peer reviewing und Software testing sind beide nicht in der Lage 100\% aller F"alle zu verifizieren, weil nicht jeder m"ogliche State des Systems "uberpr"uft wird. Bei einer Model-based verification beschreibt, man alle m"oglichen States des Systems mit einem Model. Parallel zum Model definiert man so genannte property specifications. Ein Modelchecker verarbeitet Model und Properties und sagt, ob das Model die Properties befriedigt. Zus"atzlich ist ein Modelchecker in der Lage bei der Nichteinhaltung dieser Properties dem User ein Counterexample zu Pr"asentieren. Das ist eine Abfolge von States, die zu einem unerw"unschten State gef"uhrt haben \cite{baier08}.
+Peer reviewing and testing are both unable to verify 100\% of all possible cases. In a model-based verification a behavioral model is written and correctness properties are defined. A model checker processes the model and the properties and checks if the properties hold for the defined model. If the properties don't hold the model checker presents the user a counterexample. A counterexsample is a sequence of states which resulted in a undesirable state \cite{baier08}.
 
 \section{Modeling Concurrent Systems}
 \label{sec:concurrency}
 
-Dieser Abschnitt zeigt wie Modelle mit Promela beschrieben werden und wie sich Concurrency auf das Statediagram eines Programms auswirkt. Jedes Programm kann als Statediagramm modelliert werden. Meistens werden jedoch nicht die relevanten Teile modelliert und nicht jeder State des Programm Counters.
+This section shows how models are described in Promela and how concurrency affects the state diagram of a system. Mapping a real program to a Promela Model would be costly and time-expensive. Only the relevant or critical parts of the system are modeled and not every state of a program.
 
 \subsection{Promela}
 \label{sec:promela}
 
-Spin verifiziert Modelle, die in der Sprache Promela beschrieben sind. Sp"ater werden Konzepte anhand von Promela-Codebeispielen beschrieben. Dieser Abschnitt soll zum Verst"andnis der Codebeispiele beitragen.
+Spin verifies models of system behavior, written in the system specification language Promela. In the following section, concepts are explained by Promela code examples. This section is intended to cintribute to the understanding of the code examples.
 
 Promela dient Abstraktionen von Systemen (abstractions of systems designs) zu beschreiben. Es ist eine specification language. Das Promela-Model beschreibt das Verhalten eines Systems. Promela erm"oglicht es die Synchronisation von concurrent systems zu modellieren.
 
