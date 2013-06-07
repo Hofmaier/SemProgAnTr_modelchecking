@@ -36,18 +36,6 @@ Peer reviewing and testing are both unable to verify 100\% of all possible cases
 
 This section shows how models are described in Promela and how concurrency affects the state diagram of a system. Mapping a real program to a Promela Model would be costly and time-expensive. Only the relevant or critical parts of the system are modeled and not every state of a program.
 
-\subsection{Promela}
-\label{sec:promela}
-
-Spin verifies models of system behavior, written in the system specification language Promela. In the following section, concepts are explained by Promela code examples. This section is intended to cintribute to the understanding of the code examples.
-
-Promela dient Abstraktionen von Systemen (abstractions of systems designs) zu beschreiben. Es ist eine specification language. Das Promela-Model beschreibt das Verhalten eines Systems. Promela erm"oglicht es die Synchronisation von concurrent systems zu modellieren.
-
-Die Syntax zur Deklaration der Variablen ist "ahnlich wie in der Programmiersprache C. In den nachfolgenden Beispielen wird nur der Datentyp byte verwendet.
-
-Mit dem keyword \verb|proctype| wird ein process type definiert. Auf \verb|proctype| folgen der Bezeichner und in Klammer \verb|{}| die statements des process type. \cite{holzmann03}
-
-Das keyword \verb|active| veranlasst Spin eine Instanz des folgenden process type zu erstellen. Der Prozess startet sofort. 
 
 \subsection{Interleaving}
 \label{sec:interleaving}
@@ -68,20 +56,37 @@ In this section programs are modeled as state diagrams. A state represents the p
   \label{fig:sequencielstatediagram}
 \end{figure}
 
-In a sequential program with one process, there is one possibility in which order the statements are executed. Each state has only outgoing transition. When multiple processes are executed and the scheduler strategy is a priori unknown, there are several possibilities in which order the statements are executed. Interleaving is a paradigm to model systems with multiple processes. This perspective is based on the view that only one processor is available on which the statements of the programs are interlocked \cite{baier08}. In each state there is a nondeterministic choice, which process can execute the next statement.
+In a sequential program with one process, there is one possibility in which order the statements are executed. Each state has only outgoing transition. When multiple processes are executed and the scheduler strategy is a priori unknown, there are several possibilities in which order the statements are executed. Interleaving is a paradigm to model systems with multiple processes. This perspective is based on the view that only one processor is available on which the statements of the programs are interlocked \cite{baier08}. In each state there is a nondeterministic choice, which process can execute the next statement. Figure \ref{fig:interleavingtransitionsystem} shows a state diagram of a system with two processes.
+
+\subsection{Interleaving Examples}
+\label{sec:interleavingexamples}
+
+\subsubsection{Promela}
+\label{sec:promela}
+
+Spin verifies models of system behavior, written in the system specification language Promela. In the following section, concepts are explained by Promela code examples. This section is intended to contribute to the understanding of the code examples.
+
+Promela is intended to describe abstractions of systems designs. It's specification language. A Promela model describes the behavior of a system. Promela is intended to to descripe concurrent software systems.
+
+The syntax for declaration of variables is similiar to the programming language C. In the following examples use the datatype byte.
+
+A keyword is defined with the keyword \verb|proctype|. \verb|proctype| is followed by the identifier of the process. The statements of the process type is enclosed in curly braces \verb|{}| \cite{holzmann03}.
+
+The keyword \verb|active| creates a new process instance of the following process type. The process starts immediately.
+
+
+
 Listing \ref{lst:interleavingcode} zeigt ein System in dem genau ein Prozess gestarted wird. Die statements in Prozess \verb|sequential| werden sequenziel ausgef"uhrt. Es wird eine Prozessinstanz vom type process \verb|sequential| erzeugt. Diese liest den Wert der globalen Variablen \verb|x|, addiert $2$ dazu und speichert das Resultat in der Variablen \verb|temp|. Danach wird der Wert in \verb|temp| \verb|x| zugewiesen. Die Reihenfolge der States, die das System einnehmen kann ist eindeutig. Das Statediagram dazu wird in Abbildung \ref{fig:sequencielstatediagram} gezeigt. Die Reihenfolge der statements ist eindeutig.
 
-
  \lstinputlisting[float,label={lst:interleavingcode},caption={system with a single process},numbers={left},float,language=Promela]{sequential.pml}  
-
-
-
 
 Werden Programme concurrent ausgef"uhrt, gibt es mehrere M"oglichkeiten, in welcher Reihenfolge die Statements ausgef"uhrt werden. Es unterschiedliche Abfolgen von states m"oglich. Bei jedem "Ubergang wird nondeterministic entschieden, welcher Process als n"achstes ausgef"uhrt wird. Das zusammenf"uhren der Statements beider Process zu einer sequenziellen Abfolge nennt man Interleaving. Interleaving ist die Enumeration aller m"oglichen statement Reihenfolgen. Listing \ref{list:interleaving2proc} zeigt ein Program bei dem 2 Processe $A$ und $B$ concurrent ausgef"uhrt werden. Das Statediagram wird Abbildung \ref{fig:interleavingtransitionsystem} gezeigt.
 
 \lstinputlisting[label=list:interleaving2proc, caption={Add operation with 2 processes},numbers=left,float,language=Promela]{interleavingproc.pml}  
 
 \begin{figure}
+\centering
+
  \begin{tikzpicture}[node distance=2.5cm, on grid, auto]
 \tikzstyle{every node}=[font=\tiny]
    \node[state, initial, rectangle, align=left](s1){$x=0$\\$tempA=0$\\$tempB=0$};
