@@ -40,7 +40,7 @@ This section shows how models are described in Promela and how concurrency affec
 \subsection{Interleaving}
 \label{sec:interleaving}
 
-In this section programs are modeled as state diagrams. A state represents the program counter and the values of all variables in the program. The program counter points to the next statement. A transition represents the execution of the next statement and an increment of the program counter. Figure \ref{fig:sequencielstatediagram} shows a state diagram of a sequential program.
+In this section programs are modeled as state diagrams. A state represents the program counter and the values of all variables in the program. The program counter points to the next statement. A transition represents the execution of the next statement and an increment of the program counter. Figure \ref{fig:sequencielstatediagram} shows a state diagram of a sequential program. 
 
 \begin{figure}
  \centering
@@ -56,7 +56,7 @@ In this section programs are modeled as state diagrams. A state represents the p
   \label{fig:sequencielstatediagram}
 \end{figure}
 
-In a sequential program with one process, there is one possibility in which order the statements are executed. Each state has only outgoing transition. When multiple processes are executed and the scheduler strategy is a priori unknown, there are several possibilities in which order the statements are executed. Interleaving is a paradigm to model systems with multiple processes. This perspective is based on the view that only one processor is available on which the statements of the programs are interlocked \cite{baier08}. In each state there is a nondeterministic choice, which process can execute the next statement. Figure \ref{fig:interleavingtransitionsystem} shows a state diagram of a system with two processes.
+In a sequential program with one process, there is one possibility in which order the statements are executed. Each state has only outgoing transition. When multiple processes are executed and the scheduler strategy is a priori unknown, there are several possibilities in which order the statements are executed. Interleaving is a paradigm to model systems with multiple processes. This perspective is based on the view that only one processor is available on which the statements of the programs are interlocked \cite{baier08}. In each state there is a nondeterministic choice, which process can execute the next statement. Figure \ref{fig:interleavingtransitionsystem} shows a state diagram of a system with two processes. Interleaving is a enumeration of all possible state sequences.
 
 \subsection{Interleaving Examples}
 \label{sec:interleavingexamples}
@@ -81,7 +81,10 @@ Listing \ref{lst:interleavingcode} shows a system with one active process. The s
 
  \lstinputlisting[float,label={lst:interleavingcode},caption={system with a single process},numbers={left},float,language=Promela]{sequential.pml}  
 
-Werden Programme concurrent ausgef"uhrt, gibt es mehrere M"oglichkeiten, in welcher Reihenfolge die Statements ausgef"uhrt werden. Es unterschiedliche Abfolgen von states m"oglich. Bei jedem "Ubergang wird nondeterministic entschieden, welcher Process als n"achstes ausgef"uhrt wird. Das zusammenf"uhren der Statements beider Process zu einer sequenziellen Abfolge nennt man Interleaving. Interleaving ist die Enumeration aller m"oglichen statement Reihenfolgen. Listing \ref{list:interleaving2proc} zeigt ein Program bei dem 2 Processe $A$ und $B$ concurrent ausgef"uhrt werden. Das Statediagram wird Abbildung \ref{fig:interleavingtransitionsystem} gezeigt.
+\subsubsection{Concurrent Programming}
+\label{sec:concurrent}
+
+Listing \ref{list:interleaving2proc} shows a system with 2 active processes. The processes are executed concurrently. The processes add a constant integer to the global variable \verb|x| like the system in section \ref{sec:sequential}. There are several possibilites the computation is executed. One possible computation would first execute all statements of process \verb|A| and then all statements of process \verb|B|. The scheduler can switch the process after every transition. Figure \ref{fig:interleavingtransitionsystem} shows the interleaved state diagram of the system in Listing \ref{list:interleaing2proc}.
 
 \lstinputlisting[label=list:interleaving2proc, caption={Add operation with 2 processes},numbers=left,float,language=Promela]{interleavingproc.pml}  
 
@@ -121,7 +124,7 @@ Werden Programme concurrent ausgef"uhrt, gibt es mehrere M"oglichkeiten, in welc
 \label{fig:interleavingtransitionsystem}
  \end{figure}
 
-Das Statediagram in Abbildung \ref{fig:interleavingtransitionsystem} zeigt, dass das Program in 4 unterschiedliche States terminieren kann. Der resultierende State der Computation ist non-deterministic. M"ochte man sicherstellen, dass bestimmte States nie eintreten, kann mit Spin der Statespace nach unerw"unschten States durchsucht werden.
+The state diagram \ref{fig:interleavingtransitionsystem} shows that the system from Listing \ref{list:interleaving2proc} can terminate in 4 different states. If the scheduler strategy is unknow the resulting state is non-deterministic. Modelchecking tools like spin are able search the state space for unwanted states. Undesirable states are defined with Lineare Temporal Logic. Section \ref{sec:ltl} will explain how undesirable is defined.
 
 \subsection{Synchronization}
 \label{sec:synchronization}
