@@ -68,15 +68,16 @@ Spin verifies models of system behavior, written in the system specification lan
 
 Promela is intended to describe abstractions of systems designs. It's specification language. A Promela model describes the behavior of a system. Promela is intended to to descripe concurrent software systems.
 
-The syntax for declaration of variables is similiar to the programming language C. In the following examples use the datatype byte.
+The syntax for declaration of variables is similiar to the programming language C. In the following examples use the data type byte.
 
 A keyword is defined with the keyword \verb|proctype|. \verb|proctype| is followed by the identifier of the process. The statements of the process type is enclosed in curly braces \verb|{}| \cite{holzmann03}.
 
 The keyword \verb|active| creates a new process instance of the following process type. The process starts immediately.
 
+\subsubsection{Sequential Programming}
+\label{sec:sequential}
 
-
-Listing \ref{lst:interleavingcode} zeigt ein System in dem genau ein Prozess gestarted wird. Die statements in Prozess \verb|sequential| werden sequenziel ausgef"uhrt. Es wird eine Prozessinstanz vom type process \verb|sequential| erzeugt. Diese liest den Wert der globalen Variablen \verb|x|, addiert $2$ dazu und speichert das Resultat in der Variablen \verb|temp|. Danach wird der Wert in \verb|temp| \verb|x| zugewiesen. Die Reihenfolge der States, die das System einnehmen kann ist eindeutig. Das Statediagram dazu wird in Abbildung \ref{fig:sequencielstatediagram} gezeigt. Die Reihenfolge der statements ist eindeutig.
+Listing \ref{lst:interleavingcode} shows a system with one active process. The statements are executed sequentially. A instance of the process type \verb|sequential| is created. The process reads the global variable \verb|x|, computes $x+2$ and stores the result in the variable \verb|temp|. Then \verb|temp| is assigned \verb|x|. The order of the states of the corresponding state diagram is non-ambiguous. Figure \ref{fig:sequencielstatediagram} shows the state diagram.
 
  \lstinputlisting[float,label={lst:interleavingcode},caption={system with a single process},numbers={left},float,language=Promela]{sequential.pml}  
 
