@@ -129,6 +129,7 @@ The state diagram \ref{fig:interleavingtransitionsystem} shows that the system f
 \subsection{Synchronization}
 \label{sec:synchronization}
 
+Listing \ref{lst:withoutsemaphore} shows a system with two active processes with the same process type. 
 Listing \ref{lst:withoutsemaphore} zeigt ein Programm, in dem zwei Prozesse concurrent gestartet werden und zum Wert der Variablen $x$ den Wert $2$ dazuz"ahlen. Wenn man erzwingen m"ochte, dass das Programm mit dem Wert $4$ in $x$ terminiert, muss man die Prozesse synchronisieren. Die Prozesse m"ussen so synchronisiert werden, dass jeweils nur ein Prozess in der critical section (line 4-6) ist. Eine M"oglichkeit um mutal exclusion zu erreichen ist der Einsatz von Semaphoren. Listing \ref{lst:withsemaphore} zeigt ein Programm wie mutual exlusion mit einer Semaphore erreicht wird. Wenn dieses Programm terminiert, hat die Variable $x$ immer den Wert $4$.
 
 \lstinputlisting[label={lst:withoutsemaphore},caption={Program without mutual exlusion}, numbers=left,float,language=Promela]{withoutsemaphore.pml}
