@@ -147,16 +147,18 @@ Boolean expression like \verb|x>0|, without an assignment block processes when t
 \subsubsection{Deadlock Example}
 \label{sec:deadlock}
 
-Werden in einem Programm mehrere Locks verwendet, kann es zu einem Deadlock kommen. Listing \ref{list:deadlock} zeigt ein Programm, bei dem es zu einem Deadlock kommen kann. Wenn Process \verbTakeAFirst die Semaphore $A$ decrementiert und gleich danach unterbrochen wird und Process \verbTakeBFirst unmittelbar danach Semaphore $B$ dekrementiert, kann keiner der beiden Processe weiterfahren, weil die ben"otigte Resource gelockt ist.
+When system contains more than one lock, a deadlock may occur. Listing \ref{list:deadlock} shows a system that contains a deadlock. Given the sequence process \verb|TakeAFirst| requests semaphore $A$ and in the next executed state process $B$ requests semaphore $B$. Both processes are waiting for the other semaphore to proceed. The system is dead.
 
-In Abschnitt \ref{sec:ltl} wird beschrieben, wie Spin Deadlocks in Modellen findet.
+Section \ref{sec:ltl} describes how spin can detect deadlock in systems specified with Promela.
 
 \lstinputlisting[label=list:deadlock,numbers=left,float,language=Promela,caption={Synchronization with deadlock}]{deadlock.pml}
 
 \section{Correctness Properties}
 \label{sec:ltl}
 
- Der Sachverhalt kann mit Linear Temporal Logic beschrieben werden. Dieser Abschnitt erkl"art LTL. Ein Sachverhalt ist zum Beispiel, ob ein Model keine Deadlocks enth"alt. Die Eigenschaft, dass ein Model keinen Deadlock enth"alt, kann mit LTL formalisiert werden. Zuerst werden atomic propositions beschrieben, da sie ein Bestandteil einer LTL-Formel sind. LTL-Formel spezifizieren Linear-Time Properties. Sogenannte Traces von Systemen k"onnen mit Linear-Time Properties "uberpr"uft werden. Deshalb wird auch erkl"art was Traces und Linear Time Properties sind.
+The goal of model checking is to verify a behavioral model of the system against desired properties. This properties are called correctness properties. Examples for correctness properties are mutual exclusion and deadlock freedom. 
+
+Spin read correctness properties in a formal Form, called Linear Temporal Logic(LTL). This section explains correctness properties and LTL. For a better understanding of correctness properties atomic propositions and traces are described first. Atomic propositions are part of an LTL-Formula. And Traces are important because correctness properties verify traces.
 
 \subsection{Atomic Propositions}
 \label{sec:atomicpropositions}
