@@ -84,7 +84,7 @@ Listing \ref{lst:interleavingcode} shows a system with one active process. The s
 \subsubsection{Concurrent Programming}
 \label{sec:concurrent}
 
-Listing \ref{list:interleaving2proc} shows a system with 2 active processes. The processes are executed concurrently. The processes add a constant integer to the global variable \verb|x| like the system in section \ref{sec:sequential}. There are several possibilites the computation is executed. One possible computation would first execute all statements of process \verb|A| and then all statements of process \verb|B|. The scheduler can switch the process after every transition. Figure \ref{fig:interleavingtransitionsystem} shows the interleaved state diagram of the system in Listing \ref{list:interleaing2proc}.
+Listing \ref{list:interleaving2proc} shows a system with 2 active processes. The processes are executed concurrently. The processes add a constant integer to the global variable \verb|x| like the system in section \ref{sec:sequential}. There are several possibilites the computation is executed. One possible computation would first execute all statements of process \verb|A| and then all statements of process \verb|B|. The scheduler can switch the process after every transition. Figure \ref{fig:interleavingtransitionsystem} shows the interleaved state diagram of the system in Listing \ref{list:interleaving2proc}.
 
 \lstinputlisting[label=list:interleaving2proc, caption={Add operation with 2 processes},numbers=left,float,language=Promela]{interleavingproc.pml}  
 
@@ -291,6 +291,7 @@ Mit atomic propositions kann man nur "uberpr"ufen, ob ein property in einem gege
     Operator & Math & Spin \\
     always & $\square$ & \verb|[]| \\
     and & $\lozenge$ & \verb|<>| \\
+    implies & \implies & \verb|->| \\
   \end{tabular}
   \caption{Temporal operators }
   \label{tab:temporal_operators}
@@ -314,6 +315,35 @@ Das Livenessproperty $P_{Starv}$ f"ur Starvation freedom wird in LTL wie folgt d
 = \lozenge critA
 \]
 
+\section{Example: Traffic light system}
+\label{sec:example}
+
+This section presents an example model in Promela and verification with LTL. The example is taken from \cite{kleuker09}. In this example a simple traffic light system for a crossroads is modeled. A Traffic light have two states: green and red. The model contains only 2 instead of 4 traffic lights because opposed traffic light have always the same state. The two traffic lights are numbered with 1 and 2.
+
+\subsection{Requirements}
+\label{sec:requirements}
+
+The following requirements are demanded
+\begin{enumerate}
+\item the traffic lights are either red or green
+\item The traffic light switch repetitive between red and green.
+\item Only one traffic light is green at a time.
+\item The traffic light turn alternating to green.
+\end{enumerate}
+
+\subsection{Atomic propositions}
+\label{sec:trafficlightap}
+
+First the atomic propositions for the LTL-Formulas are defined:
+
+\begin{description}
+\item[tl1green] Traffic light 1 is green.
+\item[tl1red] Traffic light 1 is red.
+\item[tl2green] Taffic light 2 is green.
+\item[tl2red] Traffic light 2 is red.
+\item[tl1last] Traffic light 1 was green last.
+\item[tl2last] Traffic light 2 was green last.
+\end{description}
 \appendix
 
 \begin{thebibliography}{9}
@@ -328,6 +358,13 @@ Gerald Holzmann,
 The Spin Model Checker: Primer and Reference Manual,
 Addison-Wesley Professional,
 2003.
+
+\bibitem{kleuker09}
+Stephan Kleuker,
+Formale Modelle der Softwareentwicklung,
+Vieweg+Teubner,
+2009.
+
 \end{thebibliography}
 
 \end{document}
