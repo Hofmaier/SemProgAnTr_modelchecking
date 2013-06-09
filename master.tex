@@ -290,8 +290,9 @@ Mit atomic propositions kann man nur "uberpr"ufen, ob ein property in einem gege
   \begin{tabular}{l l l}
     Operator & Math & Spin \\
     always & $\square$ & \verb|[]| \\
-    and & $\lozenge$ & \verb|<>| \\
-    implies & \implies & \verb|->| \\
+    eventually & $\lozenge$ & \verb|<>| \\
+    implies & $\implies$ & \verb|->| \\
+    until & $U$ & \verb|U|
   \end{tabular}
   \caption{Temporal operators }
   \label{tab:temporal_operators}
@@ -339,11 +340,51 @@ First the atomic propositions for the LTL-Formulas are defined:
 \begin{description}
 \item[tl1green] Traffic light 1 is green.
 \item[tl1red] Traffic light 1 is red.
-\item[tl2green] Taffic light 2 is green.
+\item[tl2green] Traffic light 2 is green.
 \item[tl2red] Traffic light 2 is red.
 \item[tl1last] Traffic light 1 was green last.
 \item[tl2last] Traffic light 2 was green last.
 \end{description}
+
+\subsection{LTL-Formulas}
+\label{sec:exampleltl}
+
+The requirements can be formalized as follows:
+
+\begin{enumerate}
+\item 
+  \begin{multline}
+    (((\text{tl1green} \lor \text{tl1red}) \land (\text{tl1green}\iff \neg \text{tl1red})) \\ \land((\text{tl2green} \lor \text{tl2red})\land (\text{tl2green} \iff \neg \text{tl2red})))
+  \end{multline}
+\item
+  \begin{multline}
+    \label{eq:unnumbered}
+    (((\text{tl1green} \implies (\lozenge \text{tl1red})) \\
+    \land (\text{tlred} \implies (\lozenge \text{tl1green}))\\
+    \land (\text{tl2green} \implies (\lozenge \text{tl2red})) \\
+    \land (\text{tl2red} \implies (\lozenge \text{tl2green}))))
+  \end{multline}
+\item
+  \begin{multline}
+    \label{eq:unnumbered}
+    ((\text{tl1green} \implies \neg \text{tl2green}) \land (\text{tl2green} \implies \neg \text{tl1green}))
+  \end{multline}
+\item
+  \begin{multline}
+    \label{eq:unnumbered}
+    ((\text{tl1last} U(\text{tl2last} \land \neg \text{tl1last})) \\
+    \land (\text{tl2last} U (\text{tl1last} \land \neg \text{tl2last}))\\
+\land(\text{tl1zuletzt} \iff \neg \text{tl2last}))
+  \end{multline}
+
+\subsection{Promela Model}
+\label{sec:trafficlightsmodel}
+
+\lstinputlisting[label={lst:trafficlightsmodel},caption={Promelamodel of the traffic light system},numbers=left,language=Promela,float]{trafficlights.pml}
+
+\end{enumerate}
+
+
 \appendix
 
 \begin{thebibliography}{9}
