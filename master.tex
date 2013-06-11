@@ -1,4 +1,4 @@
-\documentclass[a4paper, twoside]{article}
+p\documentclass[a4paper, twoside]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage{listings}
@@ -163,7 +163,9 @@ Spin read correctness properties in a formal Form, called Linear Temporal Logic(
 \subsection{Atomic Propositions}
 \label{sec:atomicpropositions}
 
-Atomic propositions sind Aussagen, die wahr oder falsch sein k"onnen. Eine boolean expression ist eine atomic proposition. Sie werden zu \verb|True| oder \verb|False| evaluiert. Die Evaluation ist vom state in dem sich das System zu einem Zeitpunkt befindet abh"angig. Der Ausdruck \verb|crit < 2| ist eine atomic proposition. Atomic propositions k"onnen durch Bezeichner ersetzt werden. Beispielweise k"onnte man die Aussage "Process \verb|TakeAFirst| hat \verb|mutexA| erhalten und wartet darauf, dass \verb|mutexB| frei wird" "uber das 
+Atomic propositions are typse of declarative sentences which can either true or false. They evaluate to \verb|True| or \verb|False|. The evaluation depends on the state the system is in. The expression \verb|crit < 2| is a atomic proposition. Atomic propositions can be replaced by identifiers. For exmaple, it is possible to define the sentence ``Process \verb|TakeAFirst| has aquired \verb|mutexA| and waits for \verb|mutexB| to be released.'' as $waitA$  that references the system in listing \ref{list:deadlock}. This example is used in section \ref{sec:safety} to describe deadlock freedom.
+
+Die Aussage "Process \verb|TakeAFirst| hat \verb|mutexA| erhalten und wartet darauf, dass \verb|mutexB| frei wird" "uber das 
 System aus Listing \ref{list:deadlock} mit $waitA$ bezeichnen. Dieses Beispiel wird in Abschnitt wiederverwendet um Deadlockfreiheit zu beschreiben.
 
 Die Menge $AP$ definiert die Menge aller atomic propositions eines Systems. Jedem State kann man eine Menge g"ultiger atomic propositions zuordnen. Die Teilmenge ist enthalten in $2^{AP}$.
@@ -380,7 +382,7 @@ The requirements can be formalized as follows:
 \subsection{Promela Model}
 \label{sec:trafficlightsmodel}
 
-\lstinputlisting[label={lst:trafficlightsmodel},caption={Promelamodel of the traffic light system},numbers=left,language=Promela,float]{trafficlights.pml}
+\lstinputlisting[label={lst:trafficlightsmodel},caption={Promelamodel of the traffic light system}n,umbers=left,language=Promela,float]{trafficlights.pml}
 
 \end{enumerate}
 
