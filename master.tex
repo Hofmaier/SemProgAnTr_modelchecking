@@ -164,14 +164,10 @@ Spin read correctness properties in a formal Form, called Linear Temporal Logic(
 \label{sec:atomicpropositions}
 
 Atomic propositions are typse of declarative sentences which can either true or false. They evaluate to \verb|True| or \verb|False|. The evaluation depends on the state the system is in. The expression \verb|crit < 2| is a atomic proposition. Atomic propositions can be replaced by identifiers. For exmaple, it is possible to define the sentence ``Process \verb|TakeAFirst| has aquired \verb|mutexA| and waits for \verb|mutexB| to be released.'' as $waitA$  that references the system in listing \ref{list:deadlock}. This example is used in section \ref{sec:safety} to describe deadlock freedom.
-
-Die Aussage "Process \verb|TakeAFirst| hat \verb|mutexA| erhalten und wartet darauf, dass \verb|mutexB| frei wird" "uber das 
-System aus Listing \ref{list:deadlock} mit $waitA$ bezeichnen. Dieses Beispiel wird in Abschnitt wiederverwendet um Deadlockfreiheit zu beschreiben.
-
-Die Menge $AP$ definiert die Menge aller atomic propositions eines Systems. Jedem State kann man eine Menge g"ultiger atomic propositions zuordnen. Die Teilmenge ist enthalten in $2^{AP}$.
  
-Atomic propositions k"onnen mit den Operatoren der Aussagenlogik (siehe Tabelle \ref{tab:operators_of_propositionallogic}) verkn"upft werden.
+We define $AP$ as a set of atomic propositions of a system to be verified. We can map to every state a set of atomic propositions who evaluate to \verb|True|. That set of each state is subset of $2^{AP}$.
 
+Atomic propositions can be combined with propositional logic's operators (see table \ref{tab:operators_of_propositionallogic}.
 
 \begin{table}
   \centering
