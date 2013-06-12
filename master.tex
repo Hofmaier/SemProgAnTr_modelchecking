@@ -184,16 +184,20 @@ Atomic propositions can be combined with propositional logic's operators (see ta
 \subsection{Traces}
 \label{sec:traces}
 
-Die Verhaltensmodelle aus Abschnitt \ref{sec:interleaving} koennen in einer Simulation ausgefuehrt werden. Die Ausfuehrung ist eine unter vielen moeglichen Abfolgen von States. Eine moegliche Abfolge startet in einem initial state und endet in einem terminal state. Jedem state kann ein Set von atomic propositions zugeordnet werden, die g"ultig sind. Ein Trace ist eine sequence von Sets, die g"ultige atomic propositions beinhalten. Ein Trace ist also ein Wort "uber dem Alphabet $2^{AP}$.
+The models that describe the behavior of a system in section \ref{sec:interleaving} can be executed in a simulation. The execution is one possible computation, a sequence of states. If the computation terminates as desired (in reactive system, computation typically do not terminate) a possible sequence starts in a initial state and ends in a defined terminal state. Every state can be mapped to a subset of $2^{AP}$. This subset contains atomic proposition that evaluate to \verb|True| in this state. A trace is a sequence of this subsets. Hence, a trace is a word over the alphabet $2^{AP}$.
 
-Da es in einem System $S$ mehrere Ausfuehungspfade geben kann, kann es auch mehrere Traces geben. Alle Traces eines System $S$ bezeichnet man $Traces(S)$. $Traces(S)$ definiert eine Sprache.
+A system $S$ can have multiple sequences of states. Hence, there are multiple traces in $S$. All traces of a system $S$ are referred as $Traces(S)$. $Traces(S)$ defines a language.
 
-Anhand von Listing \ref{lst:criticalsection} wird nachfolgend eine m"ogliche sequence von states und ein Trace gezeigt.
+\subsubsection{Traceexample}
+\label{sec:traceexample}
+
+In this section presents an example trace. The system, that could produce the trace is shown in listing \ref{lst:criticalsection}.
 
 \lstinputlisting[label=lst:criticalsection,caption={Critical section problem},numbers=left]{criticalsection.pml}
 
-Ein state kann als Triple, bestehend aus dem Wert der variable \verb|crit| und location counters der Prozesse \verb|A| und \verb|B| repr"asentiert werden. Der erste Wert im Triple zeigt, bei welcher line number sicher location counter von Prozess \verb|A| befindet und der zweite von Prozess \verb|B|.
-Eine m"ogliche sequence $\pi$ von states die bei der Simulation des Systems in Listing \ref{lst:criticalsection} ist
+For a better understanding, the sequence of states is first show. A state can be represented as a triple, containing the value of the variable \verb|crit| and the locations counters of process \verb|A| and process \verb|B|. The first value shows the line number of the location counter of process \verb|A| and the second the line number of process \verb|B|.
+
+A possible sequence $\pi$ of states, would be:
 
 \begin{equation}
   \label{eq:path}
@@ -206,15 +210,17 @@ Eine m"ogliche sequence $\pi$ von states die bei der Simulation des Systems in L
   \end{split}
 \end{equation}
 
-In diesem Beispiel k"onnen die beiden Bool-Variablen \verb|critA| und \verb|critB| als atomic proposition verwendet werden. Die Menge der atomic propositions $AP$ in diesem Beispiel ist
+In this example the two Boolean variables \verb|critA| and \verb|critB| are the atomic propositions. The set of all atomic propositions in the system is
+
 \[
 \text{AP}=\{critA, critB\}
-\]
+\].
 
-Der Trace zu einem zur sequence \ref{eq:path} ist das Wort
+The trace to the sequence of states show in equation \ref{eq:path} produces the word
+
 \[
 trace(\pi) = \varnothing \{critA\} \varnothing \{critB\} \varnothing
-\]
+\].
 
 \subsection{Linear-Time Properties}
 \label{sec:satisfactionrelations}
