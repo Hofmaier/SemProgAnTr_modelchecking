@@ -7,6 +7,10 @@
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{todonotes}
 
+\lstset{
+basicstyle=\footnotesize\ttfamily
+}
+
 \begin{document}
 
 \title{Model Checking with Spin}
@@ -86,7 +90,7 @@ Listing \ref{lst:interleavingcode} shows a system with one active process. The s
 
 Listing \ref{list:interleaving2proc} shows a system with 2 active processes. The processes are executed concurrently. The processes add a constant integer to the global variable \verb|x| like the system in section \ref{sec:sequential}. There are several possibilites the computation is executed. One possible computation would first execute all statements of process \verb|A| and then all statements of process \verb|B|. The scheduler can switch the process after every transition. Figure \ref{fig:interleavingtransitionsystem} shows the interleaved state diagram of the system in Listing \ref{list:interleaving2proc}.
 
-\lstinputlisting[label=list:interleaving2proc, caption={Add operation with 2 processes},numbers=left,float,language=Promela]{interleavingproc.pml}  
+\lstinputlisting[label={list:interleaving2proc}, caption={Add operation with 2 processes},numbers=left,float,language=Promela, ]{interleavingproc.pml}    
 
 \begin{figure}
 \centering
@@ -236,7 +240,9 @@ Linear-time Properties can be classified into Safety-, Liveness- and Fairness-Pr
 \subsubsection{Safety-properties}
 \label{sec:safety}
 
-Ein Safety-Property verifiziert, ob ein System unerw"unschte states enth"alt. 
+A safety-property verifies if a system contains undesirable states.
+
+Deadlock freedom is a safety property.
 
 Deadlock ist ein safety property. Deadlockfreiheit im System aus Listing \ref{list:deadlock} kann wie folgt als safety property definiert werden. Die atomic propositions $waitA$ und $waitB$ bezeichnen die Zust"ande, dass die processes \verb|TakeBFirst| und \verb|TakeAFirst| jeweils auf die anderen Mutex warten. Dann muss die Aussagenlogikformel  $\phi=\neg waitA \lor \neg waitB$ in jedem state True sein. Formell:
 
@@ -359,7 +365,7 @@ The requirements can be formalized as follows:
   \end{multline}
 \item
   \begin{multline}
-    \label{eq:unnumbered}
+    \label{eq:ltlreq1}
     (((\text{tl1green} \implies (\lozenge \text{tl1red})) \\
     \land (\text{tlred} \implies (\lozenge \text{tl1green}))\\
     \land (\text{tl2green} \implies (\lozenge \text{tl2red})) \\
@@ -367,12 +373,12 @@ The requirements can be formalized as follows:
   \end{multline}
 \item
   \begin{multline}
-    \label{eq:unnumbered}
+    \label{eq:ltlreq2}
     ((\text{tl1green} \implies \neg \text{tl2green}) \land (\text{tl2green} \implies \neg \text{tl1green}))
   \end{multline}
 \item
   \begin{multline}
-    \label{eq:unnumbered}
+    \label{eq:ltlreq3}
     ((\text{tl1last} U(\text{tl2last} \land \neg \text{tl1last})) \\
     \land (\text{tl2last} U (\text{tl1last} \land \neg \text{tl2last}))\\
 \land(\text{tl1zuletzt} \iff \neg \text{tl2last}))
