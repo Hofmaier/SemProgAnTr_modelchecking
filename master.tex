@@ -1,4 +1,4 @@
-p\documentclass[a4paper, twoside]{article}
+\documentclass[a4paper, twoside]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage{listings}
@@ -181,7 +181,7 @@ Atomic propositions can be combined with propositional logic's operators (see ta
   \label{tab:operators_of_propositionallogic}
 \end{table}
 
-\subsection{Traces}
+\subsection{Traces and words}
 \label{sec:traces}
 
 The models that describe the behavior of a system in section \ref{sec:interleaving} can be executed in a simulation. The execution is one possible computation, a sequence of states. If the computation terminates as desired (in reactive system, computation typically do not terminate) a possible sequence starts in a initial state and ends in a defined terminal state. Every state can be mapped to a subset of $2^{AP}$. This subset contains atomic proposition that evaluate to \verb|True| in this state. A trace is a sequence of this subsets. Hence, a trace is a word over the alphabet $2^{AP}$.
@@ -225,16 +225,13 @@ trace(\pi) = \varnothing \{critA\} \varnothing \{critB\} \varnothing
 \subsection{Linear-Time Properties}
 \label{sec:satisfactionrelations}
 
-Linear-time Properties legen fest welche W"orter von einem System akzeptiert werden d"urfen. Ein Linear-time property ist eine Sprache "uber dem Alphabet $2^{AP}$.
-Wenn $P$ ein LT Property und $S$ das modellierte System ist, dann erf"ullt $S$ $P$ (man schreibt $S \models P$) wenn Traces(S) $ Traces(S) \subseteq P $
-
+The goal of model checking is to verification. Verification is the evaluation of whether a system complies with a specification. So far this article dealt with the definition of the system model. To verify a system, a specification is needed. Here Linear-Time Properties come into play. Linear-time properties define which words systems can accept and which word they must not accept. A Linear-time property defines a language over the alphabet $2^{AP}$, like the system under consideration. If $P$ is a Linear-time Property and $S$ is the system under consideration, then $S$ satisfies $P$, if $\text{Traces}(S) \subseteq P$. The Formula 
 \[
 TS \models P \iff Traces(S) \subseteq P 
 \]
+means the same. $ \models $ is a satisfaction relation.
 
-$ \models $ ist eine satisfaction relation. 
-
-Linear-time Properties k"onnen in Safety-, Liveness- und Fairness-Properties unterteilt werden. In den Abschnitten \ref{sec:safety} und \ref{sec:liveness} werden Safety- und Liveness-Properties erkl"art.
+Linear-time Properties can be classified into Safety-, Liveness- and Fairness-Properties. The sections \ref{sec:safety} and \ref{sec:liveness} explain Safety- and Liveness-Properties.
 
 \subsubsection{Safety-properties}
 \label{sec:safety}
@@ -380,14 +377,12 @@ The requirements can be formalized as follows:
     \land (\text{tl2last} U (\text{tl1last} \land \neg \text{tl2last}))\\
 \land(\text{tl1zuletzt} \iff \neg \text{tl2last}))
   \end{multline}
+\end{enumerate}
 
 \subsection{Promela Model}
 \label{sec:trafficlightsmodel}
 
-\lstinputlisting[label={lst:trafficlightsmodel},caption={Promelamodel of the traffic light system}n,umbers=left,language=Promela,float]{trafficlights.pml}
-
-\end{enumerate}
-
+\lstinputlisting[label={lst:trafficlightsmodel},caption={Promelamodel of the traffic light system},numbers=left,language=Promela,float]{trafficlights.pml}
 
 \appendix
 
