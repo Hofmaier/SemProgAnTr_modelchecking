@@ -2,16 +2,18 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage{listings}
+\usepackage{graphicx}
 \usepackage{tikz}
 \usetikzlibrary{automata,positioning}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{todonotes}
 
-\lstset{
-basicstyle=\footnotesize\ttfamily
-}
-
 \begin{document}
+
+\lstset{
+basicstyle=\ttfamily,
+xleftmargin=3.5em
+}
 
 \title{Model Checking with Spin}
 \author{Lukas Hofmaier \texttt{lukas.hofmaier@hsr.ch}}
@@ -83,7 +85,7 @@ The keyword \verb|active| creates a new process instance of the following proces
 
 Listing \ref{lst:interleavingcode} shows a system with one active process. The statements are executed sequentially. A instance of the process type \verb|sequential| is created. The process reads the global variable \verb|x|, computes $x+2$ and stores the result in the variable \verb|temp|. Then \verb|temp| is assigned \verb|x|. The order of the states of the corresponding state diagram is non-ambiguous. Figure \ref{fig:sequencielstatediagram} shows the state diagram.
 
- \lstinputlisting[float,label={lst:interleavingcode},caption={system with a single process},numbers={left},float,language=Promela]{sequential.pml}  
+ \lstinputlisting[label={lst:interleavingcode},caption={system with a single process},numbers={left},float,language=Promela]{sequential.pml}  
 
 \subsubsection{Concurrent Programming}
 \label{sec:concurrent}
@@ -92,9 +94,10 @@ Listing \ref{list:interleaving2proc} shows a system with 2 active processes. The
 
 \lstinputlisting[label={list:interleaving2proc}, caption={Add operation with 2 processes},numbers=left,float,language=Promela, ]{interleavingproc.pml}    
 
+
 \begin{figure}
 \centering
-
+\scalebox{0.9}{
  \begin{tikzpicture}[node distance=2.5cm, on grid, auto]
 \tikzstyle{every node}=[font=\tiny]
    \node[state, initial, rectangle, align=left](s1){$x=0$\\$tempA=0$\\$tempB=0$};
@@ -121,12 +124,13 @@ Listing \ref{list:interleaving2proc} shows a system with 2 active processes. The
 \path[->](s6) edge node {$tempB=x+5$}(s10);
 \path[->](s10) edge node {$x=tempA$}(s11);
 \path[->](s10) edge node {$x=tempB$}(s12);
-
- \end{tikzpicture}   
-
+ \end{tikzpicture}
+}
  \caption{State diagram for system in Listing \ref{list:interleaving2proc}}
 \label{fig:interleavingtransitionsystem}
  \end{figure}
+
+
 
 The state diagram \ref{fig:interleavingtransitionsystem} shows that the system from Listing \ref{list:interleaving2proc} can terminate in 4 different states. If the scheduler strategy is unknow the resulting state is non-deterministic. Modelchecking tools like spin are able search the state space for unwanted states. Undesirable states are defined with Lineare Temporal Logic. Section \ref{sec:ltl} will explain how undesirable is defined.
 
@@ -140,22 +144,25 @@ Listing \ref{lst:withoutsemaphore} shows a system with two active processes with
 
 Listing \ref{lst:withsemaphore} shows a system that achieves mutual exclusion with semaphores. When this system terminates, the variable \verb|x| has always the value $4$.
 
-\lstinputlisting[label={lst:withoutsemaphore},caption={Program without mutual exlusion}, numbers=left,float,language=Promela]{withoutsemaphore.pml}
+
+\lstinputlisting[label={lst:withoutsemaphore},caption={Program without mutual exlusion}, numbers=left,float,language=Promela]
+{withoutsemaphore.pml}
 
 The Test \verb|x>0| and the following \verb|x--|-Operation have to be executed atomic. In Promela atomic sequences of statements are enclosed in curly braces with a preceding \verb|atomic| keyword.
 
 Boolean expression like \verb|x>0|, without an assignment block processes when the expression evaluates to False until it evaluates to True.
+
 
 \lstinputlisting[label={lst:withsemaphore},numbers=left,float,language=Promela,caption={Mutual exlusion with semaphores}]{semaphore.pml}
 
 \subsubsection{Deadlock Example}
 \label{sec:deadlock}
 
-When system contains more than one lock, a deadlock may occur. Listing \ref{list:deadlock} shows a system that contains a deadlock. Given the sequence process \verb|TakeAFirst| requests semaphore $A$ and in the next executed state process $B$ requests semaphore $B$. Both processes are waiting for the other semaphore to proceed. The system is dead.
+When system contains more than one lock, a deadlock may occur. Listing \ref{list:deadlock} shows a system that contains a deadlock. Given the a computation of the system in which process \texttt{TakeAFirst} requests semaphore $A$ and in the next executed state process $B$ requests semaphore $B$. Both processes are waiting for the other semaphore to proceed. The system is dead.
 
 Section \ref{sec:ltl} describes how spin can detect deadlock in systems specified with Promela.
 
-\lstinputlisting[label=list:deadlock,numbers=left,float,language=Promela,caption={Synchronization with deadlock}]{deadlock.pml}
+\lstinputlisting[label=list:deadlock,numbers=left,language=Promela,caption={Synchronization with deadlock}]{deadlock.pml}
 
 \section{Correctness Properties}
 \label{sec:ltl}
@@ -242,25 +249,38 @@ Linear-time Properties can be classified into Safety-, Liveness- and Fairness-Pr
 
 A safety-property verifies if a system contains undesirable states.
 
-Deadlock freedom is a safety property.
+Deadlock freedom is a safety property. Listing \ref{list:deadlock} contains a deadlock. To verify if the this system contains a deadlock a safety property can be defined as follows. Two atomic propositions are defined:
+\begin{description}
+\item[waitA] Process \texttt{TakeAFirst} acquired \texttt{mutexA} and waits for \texttt{mutexB}.
+\item[waitB] Process \texttt{TakeBFirst} acquired \texttt{mutexB} and waits for \texttt{mutexA}.
+\end{description}
 
-Deadlock ist ein safety property. Deadlockfreiheit im System aus Listing \ref{list:deadlock} kann wie folgt als safety property definiert werden. Die atomic propositions $waitA$ und $waitB$ bezeichnen die Zust"ande, dass die processes \verb|TakeBFirst| und \verb|TakeAFirst| jeweils auf die anderen Mutex warten. Dann muss die Aussagenlogikformel  $\phi=\neg waitA \lor \neg waitB$ in jedem state True sein. Formell:
+Linear-time properties can be defined with a propositional logic formula. The formula for deadlock freedom for the system in listing \ref{list:deadlock} and with the given atomic propositions for one state is:
+\begin{equation}
+  \label{eq:pl_formula_for_deadlockfreedom}
+\phi = \neg \text{waitA} \lor \neg \text{waitB}  
+\end{equation}
 
-\[
-P_{dlock} = {A_0 A_1 A_2 \dots \in (2^{AP})^{\omega} | \forall \geq i.   A_i \models \phi}
-\]
+Formula \ref{eq:pl_formula_for_deadlockfreedom} refers only to a single state in the computation. Deadlock freedom demands, that $\phi$ is true in every state of the computation. This requirement can be expressed with
+\begin{equation}
+  \label{eq:deadlockfreedom}
+  P_{dlock} = {A_0 A_1 A_2 \dots \in (2^{AP})^{\omega} | \forall \geq i.   A_i \models \phi}
+\end{equation}
+. $(2^{AP})^{\omega}$ is the set of all possible words in $2^{AP}$.
+Formula \ref{eq:deadlockfreedom} is a linear time property. It refers to all states in a possible computation. 
 
-wobei $(2^{AP})^{\omega}$ die Menge aller m"oglichen W"orter "uber $2^{AP}$ ist.
+Linear time properties can also claim mutual exclusion. A safety property that demands mutual exclusion in the system $S$ of listing \ref{lst:criticalsection}, defines a language over $2^{AP}$ without the word $\{\text{critA},\text{critB}\}$. This can be formulated with
+\begin{equation}
+  \label{eq:mutexinwords}
+  P_{mutex} = \text{Menge aller W"orter} A_0 A_1 A_2 \dots \text{mit } \{critA,critB\} \not \subseteq A_i \text{ f"ur alle } 0 \leq i
+\end{equation}
+or with
+\begin{equation}
+  \label{eq:mutex}
+P_{mutex}   = {A_0 A_1 A_2 \dots \in (2^{AP})^{\omega} | \forall \geq i.   A_i \models \neg critA \lor \neg critB}
+\end{equation}
 
-Auch Mutual exlusion kann mit einem Safety-Property verifiziert werden. Ein Safety-Property $P_{mutex}$ um mutual exlusion im System aus Listing \ref{lst:criticalsection} sicherzustellen, definiert eine Sprache in der keine W"orter mit $\{critA,critB\}$ vorkommen d"urfen. Formell:
-\[
-P_{mutex} = \text{Menge aller W"orter} A_0 A_1 A_2 \dots \text{mit } \{critA,critB\} \not \subseteq A_i \text{ f"ur alle } 0 \leq i
-\]
-\[
- = {A_0 A_1 A_2 \dots \in (2^{AP})^{\omega} | \forall \geq i.   A_i \models \neg critA \lor \neg critB}
-\]
-
-Ein Modelchecker "uberpr"uft, ob Traces(S) eines Systems $S$ ein Wort (trace) enth"alt, dass die Anforderung des definierten Property nicht erf"ullt.
+A model checker verifies, if $P_{mutex}$ holds for every trace (or word) in Tra\-ces(S).
 
 \subsubsection{Liveness-Properties}
 \label{sec:liveness}
