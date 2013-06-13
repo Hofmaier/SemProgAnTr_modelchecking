@@ -164,7 +164,7 @@ Section \ref{sec:ltl} describes how spin can detect deadlock in systems specifie
 
 \lstinputlisting[label=list:deadlock,numbers=left,language=Promela,caption={Synchronization with deadlock}]{deadlock.pml}
 
-\section{Correctness Properties}
+\section{Define correctness Properties}
 \label{sec:ltl}
 
 The goal of model checking is to verify a behavioral model of the system against desired properties. This properties are called correctness properties. Examples for correctness properties are mutual exclusion and deadlock freedom. 
@@ -285,23 +285,31 @@ A model checker verifies, if $P_{mutex}$ holds for every trace (or word) in Tra\
 \subsubsection{Liveness-Properties}
 \label{sec:liveness}
 
-Safety-Properties definieren, dass in einer Sprache bestimmte Prefixe nicht vorkommen. Ein System $S$ das nichts tun w"urde, dass heisst $Traces(S)=\varnothing$ w"urde jedes Safety-Property erf"ullen. Fortschritt muss auch verfiziert werden k"onnen. Liveness-Properties definieren, dass jeder Trace in einem System erweitert werden kann, sodass das resultierende Wort das Liveness-Property erf"ullt.
+Safety properties claim, that there are no words with bad prefixes in a language. Every system S that does nothing, that is $Traces(S)=\varnothing$, satisfies this every safety property. Safety properties cannot verify if progress occur. That's where Liveness properties are needed.
 
-Ein Liveness-Property fordert, dass sich gewisse events unendlich oft wiederholen. Liveness-Properties k"onnen nur von einem infiniten Trace erf"ullt werden. 
+Liveness properties define that every trace can be expanded so that it still holds the liveness property. A liveness property claims that an event occurs infinitely often. Liveness properties can only verify infinite traces. That means the computation of the system must not terminate.
 
-Starvation freedom ist ein Liveness Property. Starvation freedom fordert, dass jeder wartende Process eventuell seine critical section betritt. In einem infiniten Trace gibt es kein Prefix, dass starvation freedom verletzt. Aufgrund eines Prefix in einem infinten Trace kann man nicht "uberpr"ufen, ob ein Sachverhalt in Zukunft eintreten wird.
+Starvation freedom is a liveness property. Starvation freedom claims, that every waiting process eventually enters its critical section. Searching for bad prefixes cannot proof the absence of starvation freedom. A prefix only tells about the past nothing about the possible future.
 
-Formell kann man starvation freedom folgendermassen ausdr"ucken.
-\[
-P_{Starv} = \text{Menge aller infiniten W"orter } A_0 A_1 \dots A_j \in AP \text{ so dass }\exists j \geq 0. critA \in A_j
-\]
-\[
- = { A_0 A_1 \dots A_j \in (2^{AP})^{\omega} \exists j \geq 0. critA \in A_j}
-\]
+To demonstrate the definition of a liveness property listing \ref{lst:starvation} defines a system $S_{spinlock}$ that doesn't terminate and starvation free achieved. Process A tries to acquire \texttt{mutexB}. If \texttt{mutexB} isn't available it checks the availability again in an endless loop (spinlock). All traces in this system are infinite. But there are traces where process A never reaches its critical section. This is not an desired behavior. With a liveness property it is possible to claim that there are no such traces.
+
+\lstinputlisting[label={lst:starvation},caption={Critical section with starvation},numbers=left, language=Promela,float]{starvation.pml}
+
+The atomic proposition critA defines that the variable \texttt{critA} evaluates to True.
 
 Listing \ref{lst:starvation} zeigt ein System $S_{Spinlock}$ bei dem starvation freedom nicht erf"ullt ist. Process A versucht den \verb|mutexB| mit einem Spinlock zu erlangen. In diesem System gibt es Traces, bei denen Process A in einem unendliche Loop versucht \verb|mutexB| zu erlangen und so nie in die eigene critical section kommt. Ein solcher Trace erf"ullt das LTL-Property \verb|<>critA| nicht. $S_{Spinlock}$ erf"ullt $P_{Starv}$ nicht.
 
-\lstinputlisting[label={lst:starvation},caption={Critical section with starvation},numbers=left, language=Promela,float]{starvation.pml}
+Starvation freedom can be defined with the liveness property.
+\begin{equation}
+  \label{eq:starvationfreedom_in_words}
+  P_{Starv} = \text{Menge aller infiniten W"orter } A_0 A_1 \dots A_j \in AP \text{ so dass }\exists j \geq 0. critA \in A_j
+\end{equation}
+or
+\begin{equation}
+  \label{eq:starvationfreedom}
+P_{Starv} = { A_0 A_1 \dots A_j \in (2^{AP})^{\omega} \exists j \geq 0. critA \in A_j}
+\end{equation}.
+$S_{spinlock}$ doesn't satisfy $P_{Starv}$
 
 \subsection{Linear Temporal Logic}
 \label{sec:lineartemporallogic}
@@ -427,8 +435,8 @@ Addison-Wesley Professional,
 
 \bibitem{kleuker09}
 Stephan Kleuker,
-Formale Modelle der Softwareentwicklung,
-Vieweg+Teubner,
+Formale Modelle der Softwareent\-wicklung,
+View\-eg+\-Teub\-ner,
 2009.
 
 \end{thebibliography}
