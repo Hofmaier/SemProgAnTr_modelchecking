@@ -270,10 +270,10 @@ Formula \ref{eq:pl_formula_for_deadlockfreedom} refers only to a single state in
 Formula \ref{eq:deadlockfreedom} is a linear time property. It refers to all states in a possible computation. 
 
 Linear time properties can also claim mutual exclusion. A safety property that demands mutual exclusion in the system $S$ of listing \ref{lst:criticalsection}, defines a language over $2^{AP}$ without the word $\{\text{critA},\text{critB}\}$. This can be formulated with
-\begin{equation}
+\begin{multline}
   \label{eq:mutexinwords}
-  P_{mutex} = \text{Menge aller W"orter} A_0 A_1 A_2 \dots \text{mit } \{critA,critB\} \not \subseteq A_i \text{ f"ur alle } 0 \leq i
-\end{equation}
+  P_{mutex} = \text{set of all words} A_0 A_1 A_2 \dots \\ \text{with} \{critA,critB\} \not \subseteq A_i \text{for all } 0 \leq i
+\end{multline}
 or with
 \begin{equation}
   \label{eq:mutex}
@@ -291,34 +291,30 @@ Liveness properties define that every trace can be expanded so that it still hol
 
 Starvation freedom is a liveness property. Starvation freedom claims, that every waiting process eventually enters its critical section. Searching for bad prefixes cannot proof the absence of starvation freedom. A prefix only tells about the past nothing about the possible future.
 
-To demonstrate the definition of a liveness property listing \ref{lst:starvation} defines a system $S_{spinlock}$ that doesn't terminate and starvation free achieved. Process A tries to acquire \texttt{mutexB}. If \texttt{mutexB} isn't available it checks the availability again in an endless loop (spinlock). All traces in this system are infinite. But there are traces where process A never reaches its critical section. This is not an desired behavior. With a liveness property it is possible to claim that there are no such traces.
-
 \lstinputlisting[label={lst:starvation},caption={Critical section with starvation},numbers=left, language=Promela,float]{starvation.pml}
+
+To demonstrate the definition of a liveness property listing \ref{lst:starvation} defines a system $S_{spinlock}$ that doesn't terminate and starvation free achieved. Process A tries to acquire \texttt{mutexB}. If \texttt{mutexB} isn't available it checks the availability again in an endless loop (spinlock). All traces in this system are infinite. But there are traces where process A never reaches its critical section. This is not an desired behavior. With a liveness property it is possible to claim that there are no such traces.
 
 The atomic proposition critA defines that the variable \texttt{critA} evaluates to True.
 
-Listing \ref{lst:starvation} zeigt ein System $S_{Spinlock}$ bei dem starvation freedom nicht erf"ullt ist. Process A versucht den \verb|mutexB| mit einem Spinlock zu erlangen. In diesem System gibt es Traces, bei denen Process A in einem unendliche Loop versucht \verb|mutexB| zu erlangen und so nie in die eigene critical section kommt. Ein solcher Trace erf"ullt das LTL-Property \verb|<>critA| nicht. $S_{Spinlock}$ erf"ullt $P_{Starv}$ nicht.
-
-Starvation freedom can be defined with the liveness property.
-\begin{equation}
+Starvation freedom can be defined with the liveness property
+\begin{multline}
   \label{eq:starvationfreedom_in_words}
-  P_{Starv} = \text{Menge aller infiniten W"orter } A_0 A_1 \dots A_j \in AP \text{ so dass }\exists j \geq 0. critA \in A_j
-\end{equation}
+  P_{Starv} = \text{set of all infinite words } A_0 A_1 \dots A_j \in AP \\ \text{ that }\exists j \geq 0. critA \in A_j
+\end{multline}
 or
 \begin{equation}
   \label{eq:starvationfreedom}
-P_{Starv} = { A_0 A_1 \dots A_j \in (2^{AP})^{\omega} \exists j \geq 0. critA \in A_j}
+P_{Starv} = { A_0 A_1 \dots A_j \in (2^{AP})^{\omega} | \exists j \geq 0. critA \in A_j}
 \end{equation}.
-$S_{spinlock}$ doesn't satisfy $P_{Starv}$
+$S_{spinlock}$ doesn't satisfy $P_{Starv}$. Traces($S_{spinlock}$) contains infinite traces where critA never occurs.
 
 \subsection{Linear Temporal Logic}
 \label{sec:lineartemporallogic}
 
-M"ochte man ein Model, dass in Promela definiert ist, von Spin verifizieren lassen, muss man Spin das Model als Promela Source Code und die Definition eines Correctness-Property geben. Die Safety und Liveness-Properties aus Abschnitt \ref{sec:safety} und \ref{sec:liveness} sind ungeeignet f"ur die Eingabe. Linear Temporal Logic ist ein Formalismus mit dem Correctness Properties einfacher formuliert werden k"onnen.
+The spin model checker tool reads the system model as Promela source code. To verify the model, it needs also to read the system specification. As discussed in section \ref{sec:satisfactionrelations} with linear time properties it is possible to describe desired behavior. But it would be cumbersome to write down the linear time properties as in equation \ref{eq:starvationfreedom} for example with a keyboard. Linear Temporal Logic(LTL) is a formal logic that can express linear time properties. It can easy encoded in with ASCII character, so spin can read. The LTL is just one way to describe the specification of correctness properties in spin. This section report describes only the specification with LTL.
 
-Ein LTL-Formel besteht aus atomic propositions, die mit Operatoren der Aussagenlogik  und der temporal logic verkn"upft werden.
-
-Mit atomic propositions kann man nur "uberpr"ufen, ob ein property in einem gegebenen state $s$ wahr oder falsch ist. M"ochte man beispielsweise mutual exlusion in Program \ref{lst:withoutsemaphore} ausdr"ucken, ben"otigt man Operatoren, die sich auf alle m"oglichen states beziehen. Temporal operators erm"oglichen solche Aussagen (siehe Tabelle \ref{tab:temporal_operators}). Die Formel k"onnen mit ASCI-Character ausgedr"uckt werden. Diese Form eignet sich f"ur die Eingabe von Spin.
+A LTL-Formula contains atomic propositions, which are connected with logic operators and with temporal operators. With temporal operators it is possible to define behavior over serveral states. The linear time properties in section \ref{sec:satisfactionrelations} consider all possible states. The temporal operator used in this report are shown in \ref{tab:temporal_operators}.
 
 \begin{table}
   \centering
@@ -333,7 +329,8 @@ Mit atomic propositions kann man nur "uberpr"ufen, ob ein property in einem gege
   \label{tab:temporal_operators}
 \end{table}
 
-Das Mutual Exlusion Safetyproperty $P_{mutex}$ aus Abschnitt \ref{sec:safety} kann in LTL pr"agnanter definiert werden
+The mutual exlusion safety property $P_{mutex}$ in section \ref{sec:safety} can be formulated in LTL as follows:
+
 \[
   {A_0 A_1 A_2 \dots \in (2^{AP})^{\omega} | \forall \geq i.   A_i \models \neg critA \lor \neg critB}
 \]
@@ -342,7 +339,7 @@ Das Mutual Exlusion Safetyproperty $P_{mutex}$ aus Abschnitt \ref{sec:safety} ka
 = \square \neg (critA,critB)
 \]
 
-Das Livenessproperty $P_{Starv}$ f"ur Starvation freedom wird in LTL wie folgt definiert:
+The liveness property $P_{Starv}$ in section \ref{sec:liveness} can be formulated in LTL as follows:
 \[
  { A_0 A_1 \dots A_j \in (2^{AP})^{\omega} \exists j \geq 0. critA \in A_j}
 \]
