@@ -23,6 +23,4 @@ atomic{
 	run WithSynchronization();
 	run WithSynchronization();
 }
-(_nr_pr == 1)->
-	assert(x>3);
 }

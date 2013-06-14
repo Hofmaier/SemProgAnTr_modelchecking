@@ -12,6 +12,4 @@ atomic{
 	run WithoutSynchronization();
 	run WithoutSynchronization();
 }
-(nrpr == 1) ->
-assert ( x <4);
 }

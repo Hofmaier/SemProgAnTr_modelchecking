@@ -11,7 +11,7 @@
 \begin{document}
 
 \lstset{
-basicstyle=\ttfamily,
+basicstyle=\small\ttfamily,
 xleftmargin=3.5em
 }
 
@@ -21,10 +21,16 @@ xleftmargin=3.5em
 \maketitle
 \tableofcontents
 
+\begin{abstract}
+  Verifing concurrent programs is a challenge. Modelchecking is a formal method for the verification of concurrent programs. In comparison to peer reviewing and software testing, model checking can proof if a defined property holds or not. It can proof that the program does the right thing (what is defined in the specfication).
+
+This article will give a brief introduction what model checking is and how models and properties are defined for the spin model checker tool. First model checking is compared to other verification methods. The section describes the advantages of model checking. The next next section explains how to use the language Promela to describe the behavior of a model. The next section describes correctness properties in general and how to define properties with temporal linear logic(LTL). The last section presents a complette example of specifing correctness properties and a behavioral model of a traffic light system.
+\end{abstract}
+
 \section{Model Checking}
 \label{sec:modelchecking}
 
-The Goal of a model checker is to verify behavioral models. That is, a model checker verifies whether a condition for a given model holds. Spin is a model checker. The model is described in Promela. Promela is a system specification language. The condition or property is described by linear temporal logic. In the next section model checking is compared to other verification methods. The section describes the advantages of model checking. The next next section explains how to use Promela to describe the behavior of a model. The next section describes correctness properties in general and how to define properties with temporal linear logic(LTL). Spin takes Promela source code and the LTL Properties as input and tells the user if the model holds for the defined properties.
+The Goal of a model checker is to verify behavioral models. That is, a model checker verifies whether a condition for a given model holds. Spin is a model checker. The model is described in Promela. Promela is a system specification language. The condition or property can be described by linear temporal logic.  Spin takes Promela source code and the LTL Properties as input and tells the user if the model holds for the defined properties.
 
 \subsection{Why Model Checking}
 \label{sec:why}
@@ -130,41 +136,38 @@ Listing \ref{list:interleaving2proc} shows a system with 2 active processes. The
 \label{fig:interleavingtransitionsystem}
  \end{figure}
 
-
-
 The state diagram \ref{fig:interleavingtransitionsystem} shows that the system from Listing \ref{list:interleaving2proc} can terminate in 4 different states. If the scheduler strategy is unknow the resulting state is non-deterministic. Modelchecking tools like spin are able search the state space for unwanted states. Undesirable states are defined with Lineare Temporal Logic. Section \ref{sec:ltl} will explain how undesirable is defined.
 
 \subsection{Synchronization}
 \label{sec:synchronization}
 
-\subsubsection{Synchronization Example}
+Four different non-deterministic terminal states in a program that adds constant integers to a shared variable isn't normaly the desired behavior. Processes can be synchronized to avoid race conditions. The following section will explain one way of synchronization on basis of an example. The example describes a synchronized variant of listing \ref{list:interleaving2proc}.
+
+\subsubsection{Synchronization example}
 \label{sec:syncexample}
 
 Listing \ref{lst:withoutsemaphore} shows a system with two active processes with the same process type. The processes are instantiated within the \verb|init|-process. It is always the first process activated. Both processes add the value $2$ to the value stored in \verb|x|. If you like to enforce that the resulting value in \verb|x| is $4$, you have to synchronize the processes. Only one process can be in the critical section (line 4-8). This is also called mutual exclusion. One way to achieve mutual exclusion is the use of semaphores.
 
-Listing \ref{lst:withsemaphore} shows a system that achieves mutual exclusion with semaphores. When this system terminates, the variable \verb|x| has always the value $4$.
+\lstinputlisting[label={lst:withoutsemaphore},caption={Program without mutual exlusion}, numbers=left,language=Promela]{withoutsemaphore.pml}
 
+Listing \ref{lst:withsemaphore} shows a system that achieves mutual exclusion with semaphores. Processes have to acquire a semaphore, before they can enter the critical section. When this system terminates, the variable \verb|x| has always the value $4$.
 
-\lstinputlisting[label={lst:withoutsemaphore},caption={Program without mutual exlusion}, numbers=left,float,language=Promela]
-{withoutsemaphore.pml}
+\lstinputlisting[label={lst:withsemaphore},numbers=left,float,language=Promela,caption={Mutual exlusion with semaphores}]{semaphore.pml}
 
 The Test \verb|x>0| and the following \verb|x--|-Operation have to be executed atomic. In Promela atomic sequences of statements are enclosed in curly braces with a preceding \verb|atomic| keyword.
 
 Boolean expression like \verb|x>0|, without an assignment block processes when the expression evaluates to False until it evaluates to True.
-
-
-\lstinputlisting[label={lst:withsemaphore},numbers=left,float,language=Promela,caption={Mutual exlusion with semaphores}]{semaphore.pml}
 
 \subsubsection{Deadlock Example}
 \label{sec:deadlock}
 
 When system contains more than one lock, a deadlock may occur. Listing \ref{list:deadlock} shows a system that contains a deadlock. Given the a computation of the system in which process \texttt{TakeAFirst} requests semaphore $A$ and in the next executed state process $B$ requests semaphore $B$. Both processes are waiting for the other semaphore to proceed. The system is dead.
 
-Section \ref{sec:ltl} describes how spin can detect deadlock in systems specified with Promela.
-
 \lstinputlisting[label=list:deadlock,numbers=left,language=Promela,caption={Synchronization with deadlock}]{deadlock.pml}
 
-\section{Define correctness Properties}
+Section \ref{sec:ltl} describes how spin can detect deadlock in systems specified with Promela.
+
+\section{Define correctness properties}
 \label{sec:ltl}
 
 The goal of model checking is to verify a behavioral model of the system against desired properties. This properties are called correctness properties. Examples for correctness properties are mutual exclusion and deadlock freedom. 
@@ -180,7 +183,7 @@ We define $AP$ as a set of atomic propositions of a system to be verified. We ca
 
 Atomic propositions can be combined with propositional logic's operators (see table \ref{tab:operators_of_propositionallogic}.
 
-\begin{table}
+\begin{table}[h]
   \centering
 
   \begin{tabular}{l l l}
@@ -330,7 +333,6 @@ A LTL-Formula contains atomic propositions, which are connected with logic opera
 \end{table}
 
 The mutual exlusion safety property $P_{mutex}$ in section \ref{sec:safety} can be formulated in LTL as follows:
-
 \[
   {A_0 A_1 A_2 \dots \in (2^{AP})^{\omega} | \forall \geq i.   A_i \models \neg critA \lor \neg critB}
 \]
@@ -351,7 +353,7 @@ The liveness property $P_{Starv}$ in section \ref{sec:liveness} can be formulate
 \section{Example: Traffic light system}
 \label{sec:example}
 
-This section presents an example model in Promela and verification with LTL. The example is taken from \cite{kleuker09}. In this example a simple traffic light system for a crossroads is modeled. A Traffic light have two states: green and red. The model contains only 2 instead of 4 traffic lights because opposed traffic light have always the same state. The two traffic lights are numbered with 1 and 2.
+This section presents an example model in Promela and verification with LTL. The example is taken from \cite{kleuker09}. In this example a simple traffic light system for a crossroads is modeled. A Traffic light has two states: green and red. The model contains only 2 instead of 4 traffic lights because opposed traffic light have always the same state. The two traffic lights are numbered with 1 and 2.
 
 \subsection{Requirements}
 \label{sec:requirements}
@@ -413,7 +415,7 @@ The requirements can be formalized as follows:
 \subsection{Promela Model}
 \label{sec:trafficlightsmodel}
 
-\lstinputlisting[label={lst:trafficlightsmodel},caption={Promelamodel of the traffic light system},numbers=left,language=Promela,float]{trafficlights.pml}
+\lstinputlisting[label={lst:trafficlightsmodel},caption={Promelamodel of the traffic light system},numbers=left,language=Promela]{trafficlights.pml}
 
 \appendix
 

@@ -7,18 +7,14 @@ byte mutexA = 1;
 byte mutexB = 1;
 
 proctype TakeAFirst(){
-
 	 request_semaphore(mutexA);
 	 request_semaphore(mutexB);
-
 	 byte temp1;
 	 temp1 = resourceA+2;
 	 resourceA = temp1;
-
 	 byte temp2;
 	 temp2 = resourceB * resourceA;
 	 resourceB = temp2;
-
 	 release_semaphore(mutexA);
 	 release_semaphore(mutexB);
 }
@@ -26,25 +22,18 @@ proctype TakeAFirst(){
 proctype TakeBFirst(){
 	 request_semaphore(mutexB);
 	 request_semaphore(mutexA);
-
 	 byte temp1;
 	 temp1 = resourceA+2;
 	 resourceA = temp1;
-
 	 byte temp2;
 	 temp2 = resourceB * resourceA;
 	 resourceB = temp2;
-
 	 release_semaphore(mutexA);
 	 release_semaphore(mutexB);	 
 }
-
 init{
 atomic{
 	run TakeAFirst();
 	run TakeBFirst();
 }
-(_nr_pr == 1)->
-	assert(resourceA<4);
-	assert(resourceB<8);
 }
