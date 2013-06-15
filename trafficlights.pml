@@ -1,31 +1,29 @@
-mtype={p,v,rot,gruen};
-mtype zustand[2];
-bool gestartet=false;
-chan zentrale= [0] of {mtype,bit};
-bit dran=0; /* who's next */
-proctype ampel(bit name){
+mtype={p,v,red,green};
+mtype tlstate[2];
+chan center = [0] of {mtype,byte};
+bit next_tl=0; /* who's next */
+proctype trafficlight(bit name){
 	 do
-	 :: zustand[name]==rot ->
-	    zentrale!p,name;
-	    zustand[name]=gruen;
-	    zustand[name]=rot;
-	    zentrale!v,name;
+	 :: tlstate[name]==red ->
+	    center!p,name;
+	    tlstate[name]=gruen;
+	    tlstate[name]=red;
+	    center!v,name;
 	 od;
 }
 proctype Semaphor(){
 	 do	 
-	 :: zentrale?p,eval(dran) ->
-	    zentrale?v,_;
-	    dran=1-dran;	
+	 ::  center?p,eval(next_tl) ->
+	    center?v,_;
+	    next_tl=1-next_tl;	
 	 od;
 }
 init{
 	atomic{
-		zustand[0]=rot;
-		zustand[1]=rot;
+		tlstate[0]=red;
+		tlstate[1]=red;
 		run ampel(0);
 		run ampel(1);
 		run Semaphor();
-		gestartet=true;
 	};		
 }

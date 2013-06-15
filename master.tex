@@ -12,7 +12,8 @@
 
 \lstset{
 basicstyle=\small\ttfamily,
-xleftmargin=3.5em
+xleftmargin=3.5em,
+language=Promela
 }
 
 \title{Model Checking with Spin}
@@ -408,16 +409,49 @@ The requirements can be formalized as follows:
     \label{eq:ltlreq3}
     ((\text{tl1last} U(\text{tl2last} \land \neg \text{tl1last})) \\
     \land (\text{tl2last} U (\text{tl1last} \land \neg \text{tl2last}))\\
-\land(\text{tl1zuletzt} \iff \neg \text{tl2last}))
+\land(\text{tl1last} \iff \neg \text{tl2last}))
   \end{multline}
 \end{enumerate}
+
+The first formula ensure that every traffic light has only two states and that the state are mutualy exclusive. The second formula checks if the traffic lights witch repititive beetwen the states red and green. The third formula ensures that only one traffic light is green at the moment. Keep in mind that both traffic light can be red. The fourth formula defines that traffic light have to switch. A Traffic light is red until it switches to green. An it can stay green unit it switches back to red.
 
 \subsection{Promela Model}
 \label{sec:trafficlightsmodel}
 
 \lstinputlisting[label={lst:trafficlightsmodel},caption={Promelamodel of the traffic light system},numbers=left,language=Promela]{trafficlights.pml}
 
-\appendix
+In a Promela system specification \texttt{mtype} defines symbols. They are like an enum. In listing \ref{lst:trafficlightsmodel} \texttt{p}, \texttt{v}, \texttt{red} and \texttt{green} are defined. The traffic light system has a Semaphore process to that synchronizes state transmissions.  The trafficlight processes communicate with the semaphore process over the channel \texttt{center}. A channel is defined with the keyword \texttt{chan}. \texttt{chan center=[0] of {mtype,bit}} defines a channel that accepts pair of values with the type \texttt{mtype} and \texttt{bit}. It's a synchronous channel. The state of each traffic light is represented with an array of the previously defined symbols. The array has length 2. It is defined with \texttt{mtype tlstate[]}. The system instantiates 2 processes of type trafficlight. Each process instance changes only one element of \texttt{tlstate}. \texttt{center!p,name;} is the P-operation. A traffic light tries to send the semaphore process the value pair of the p-symbol and its number as bit. \texttt{center!p,name;} block until the semaphore process read the channel with \texttt{center?p,eval\(next_tl\);}. Reading means that the values must match. The semaphore process waits for an incoming p symbol and the number of the traffic light who is next green. The semaphore process controls this way which traffic light is green next.
+
+\begin{lstlisting}[label={lst:spinltl},caption={LTL-properties with formalized atomic propositions for spin}]
+#define tl1red(tlstate[0]==red)
+#define tl1green(tlstate[0]==green)
+#define tl2red (zustand[1]==rot)
+#define tl2green (zustand[1]==gruen)
+#define tl1last (next_tl==1)
+#define tl2last (next_tl==0)
+
+/* 1. */
+[] ( ( (tl1red || tl1green)
+&&(tl1red <-> (!tl1green)))
+&&( (tl2red || tl2green)
+&&(tl2red <-> (!tl2green))) )
+/* 2 */
+[] ( (tl1red -> (<> tl1green))
+&&(tl1green -> (<> tl1red))
+&&(tl2red -> (<> tl2green))
+&&(tl2green -> (<> tl2red)) )
+/* 3 */
+[] ( (tl1green -> (!tl2green))
+&&(tl2green -> (!tl1green)) )
+/* 4 */
+[] ( (tl1last
+U (tl2last && (!tl1last)))
+&&(tl2last
+U (tl1last && (!tl2last)))
+&& (tl1last <-> (!tl2last)) )
+\end{lstlisting}
+
+In listing \ref{lst:spinltl} the atomic propositions of \ref{sec:exampleltl} are formalized and defined as macros. Spin can test the LTL-Formulas from listing \ref{lst:spinltl} hold in the model of listing \ref{lst:trafficlightsmodel}.
 
 \begin{thebibliography}{9}
 \bibitem{baier08}
