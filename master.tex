@@ -20,7 +20,6 @@ language=Promela
 \author{Lukas Hofmaier \texttt{lukas.hofmaier@hsr.ch}}
 
 \maketitle
-\tableofcontents
 
 \begin{abstract}
   Verifying concurrent programs is a challenge. Model checking is a formal method for the verification of concurrent programs. In comparison to peer reviewing and software testing, model checking can proof if a defined property holds or not. It can proof that the program does the right thing (what is defined in the specification).
@@ -361,7 +360,7 @@ This section presents an example model in Promela and verification with LTL. The
 
 The following requirements are demanded
 \begin{enumerate}
-\item the traffic lights are either red or green
+\item The traffic lights are either red or green
 \item The traffic light switch repetitive between red and green.
 \item Only one traffic light is green at a time.
 \item The traffic light turn alternating to green.
@@ -420,7 +419,9 @@ The first formula ensures that every traffic light has only two states and that 
 
 \lstinputlisting[label={lst:trafficlightsmodel},caption={Promelamodel of the traffic light system},numbers=left,language=Promela]{trafficlights.pml}
 
-In a Promela system specification \texttt{mtype} defines symbols. They are like an enum. In listing \ref{lst:trafficlightsmodel} \texttt{p}, \texttt{v}, \texttt{red} and \texttt{green} are defined. The traffic light system has a Semaphore process to that synchronizes state transmissions.  The trafficlight processes communicate with the semaphore process over the channel \texttt{center}. A channel is defined with the keyword \texttt{chan}. \texttt{chan center=[0] of {mtype,bit}} defines a channel that accepts pair of values with the type \texttt{mtype} and \texttt{bit}. It's a synchronous channel. The state of each traffic light is represented with an array of the previously defined symbols. The array has length 2. It is defined with \texttt{mtype tlstate[]}. The system instantiates 2 processes of type trafficlight. Each process instance changes only one element of \texttt{tlstate}. \texttt{center!p,name;} is the P-operation. A traffic light tries to send the semaphore process the value pair of the p-symbol and its number as bit. \texttt{center!p,name;} block until the semaphore process read the channel with \texttt{center?p,eval\(next_tl\);}. Reading means that the values must match. The semaphore process waits for an incoming p symbol and the number of the traffic light who is next green. The semaphore process controls this way which traffic light is green next.
+The two traffic lights has to be synchronized. In listing \ref{lst:trafficlightsmodel} synchronization is achieved with a centralized process of type Semaphore. The processes who control the traffic light communicate with the semaphore process over a Promela channel in a synchronous manner. The following paragraph explains the semantics of the listing \ref{lst:trafficlightsmodel} in detail. 
+
+In a Promela system specification \texttt{mtype} defines symbols. They are like an enum. In listing \ref{lst:trafficlightsmodel} the symbols \texttt{p}, \texttt{v}, \texttt{red} and \texttt{green} are defined. The traffic light system has a Semaphore process to that synchronizes state transmissions.  The trafficlight processes communicate with the semaphore process over the channel \texttt{center}. A channel is defined with the keyword \texttt{chan}. \texttt{chan center=[0] of {mtype,bit}} defines a channel that accepts pair of values with the type \texttt{mtype} and \texttt{bit}. It's a synchronous channel. The state of each traffic light is represented with an array of the previously defined symbols. The array has length 2. It is defined with \texttt{mtype tlstate[]}. The system instantiates 2 processes of type trafficlight. Each process instance changes only one element of \texttt{tlstate}. \texttt{center!p,name;} is the P-operation. A traffic light tries to send the semaphore process the value pair of the p-symbol and its number as bit. \texttt{center!p,name;} block until the semaphore process read the channel with \texttt{center?p,eval\(next_tl\);}. Reading means that the values must match. The semaphore process waits for an incoming p symbol and the number of the traffic light who is next green. The semaphore process controls this way which traffic light is green next.
 
 \begin{lstlisting}[label={lst:spinltl},caption={LTL-properties with formalized atomic propositions for spin}]
 #define tl1red(tlstate[0]==red)
