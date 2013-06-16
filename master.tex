@@ -16,7 +16,7 @@ xleftmargin=3.5em,
 language=Promela
 }
 
-\title{Model Checking with Spin}
+\title{Modeling concurrent systems and specification of correctness properties with Spin}
 \author{Lukas Hofmaier \texttt{lukas.hofmaier@hsr.ch}}
 
 \maketitle
@@ -144,7 +144,7 @@ The state diagram \ref{fig:interleavingtransitionsystem} shows that the system f
 
 Four different non-deterministic terminal states in a program that adds constant integers to a shared variable isn't normaly the desired behavior. Processes can be synchronized to avoid race conditions. The following section will explain one way of synchronization on basis of an example. The example describes a synchronized variant of listing \ref{list:interleaving2proc}.
 
-\subsubsection{Synchronization example}
+\subsection{Synchronization Examples}
 \label{sec:syncexample}
 
 Listing \ref{lst:withoutsemaphore} shows a system with two active processes with the same process type. The processes are instantiated within the \verb|init|-process. It is always the first process activated. Both processes add the value $2$ to the value stored in \verb|x|. If you like to enforce that the resulting value in \verb|x| is $4$, you have to synchronize the processes. Only one process can be in the critical section (line 4-8). This is also called mutual exclusion. One way to achieve mutual exclusion is the use of semaphores.
