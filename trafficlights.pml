@@ -11,7 +11,7 @@ proctype trafficlight(bit name){
 	    center!v,name;
 	 od;
 }
-proctype Semaphor(){
+proctype Semaphore(){
 	 do	 
 	 ::  center?p,eval(next_tl) ->
 	    center?v,_;
