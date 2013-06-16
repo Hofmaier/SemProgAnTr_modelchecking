@@ -23,9 +23,9 @@ language=Promela
 \tableofcontents
 
 \begin{abstract}
-  Verifing concurrent programs is a challenge. Modelchecking is a formal method for the verification of concurrent programs. In comparison to peer reviewing and software testing, model checking can proof if a defined property holds or not. It can proof that the program does the right thing (what is defined in the specfication).
+  Verifying concurrent programs is a challenge. Model checking is a formal method for the verification of concurrent programs. In comparison to peer reviewing and software testing, model checking can proof if a defined property holds or not. It can proof that the program does the right thing (what is defined in the specification).
 
-This article will give a brief introduction what model checking is and how models and properties are defined for the spin model checker tool. First model checking is compared to other verification methods. The section describes the advantages of model checking. The next next section explains how to use the language Promela to describe the behavior of a model. The next section describes correctness properties in general and how to define properties with temporal linear logic(LTL). The last section presents a complette example of specifing correctness properties and a behavioral model of a traffic light system.
+This article will give a brief introduction what model checking is and how models and properties are defined for the spin model checker tool. First model checking is compared to other verification methods. The section describes the advantages of model checking. The next section explains how to use the language Promela to describe the behavior of a model. The next section describes correctness properties in general and how to define properties with temporal linear logic (LTL). The last section presents a complete example of specifying correctness properties and a behavioral model of a traffic light system.
 \end{abstract}
 
 \section{Model Checking}
@@ -42,7 +42,7 @@ Among others, there are two options to verify software
 \item[Software testing] Software is compiled and executed. The system reads explicitly defined input and a subset of all possible paths is executed. The Output is compared with the specification. Practically, it is impossible to cover all possible paths through testing. Testing can expose errors. It doesn't proofs the absence of errors.
 \end{description}
 
-Peer reviewing and testing are both unable to verify 100\% of all possible cases. In a model-based verification a behavioral model is written and correctness properties are defined. A model checker processes the model and the properties and checks if the properties hold for the defined model. If the properties don't hold the model checker presents the user a counterexample. A counterexsample is a sequence of states which resulted in a undesirable state \cite{baier08}.
+Peer reviewing and testing are both unable to verify 100\% of all possible cases. In a model-based verification a behavioral model is written and correctness properties are defined. A model checker processes the model and the properties and checks if the properties hold for the defined model. If the properties don't hold the model checker presents the user a counterexample. A counterexample is a sequence of states which resulted in an undesirable state \cite{baier08}.
 
 \section{Modeling Concurrent Systems}
 \label{sec:concurrency}
@@ -69,7 +69,7 @@ In this section programs are modeled as state diagrams. A state represents the p
   \label{fig:sequencielstatediagram}
 \end{figure}
 
-In a sequential program with one process, there is one possibility in which order the statements are executed. Each state has only outgoing transition. When multiple processes are executed and the scheduler strategy is a priori unknown, there are several possibilities in which order the statements are executed. Interleaving is a paradigm to model systems with multiple processes. This perspective is based on the view that only one processor is available on which the statements of the programs are interlocked \cite{baier08}. In each state there is a nondeterministic choice, which process can execute the next statement. Figure \ref{fig:interleavingtransitionsystem} shows a state diagram of a system with two processes. Interleaving is a enumeration of all possible state sequences.
+In a sequential program with one process, there is one possibility in which order the statements are executed. Each state has only outgoing transition. When multiple processes are executed and the scheduler strategy is a priori unknown, there are several possibilities in which order the statements are executed. Interleaving is a paradigm to model systems with multiple processes. This perspective is based on the view that only one processor is available on which the statements of the programs are interlocked \cite{baier08}. In each state there is a nondeterministic choice, which process can execute the next statement. Figure \ref{fig:interleavingtransitionsystem} shows a state diagram of a system with two processes. Interleaving is an enumeration of all possible state sequences.
 
 \subsection{Interleaving Examples}
 \label{sec:interleavingexamples}
@@ -79,9 +79,9 @@ In a sequential program with one process, there is one possibility in which orde
 
 Spin verifies models of system behavior, written in the system specification language Promela. In the following section, concepts are explained by Promela code examples. This section is intended to contribute to the understanding of the code examples.
 
-Promela is intended to describe abstractions of systems designs. It's specification language. A Promela model describes the behavior of a system. Promela is intended to to descripe concurrent software systems.
+Promela is intended to describe abstractions of systems designs. It's specification language. A Promela model describes the behavior of a system. Promela is intended to describe concurrent software systems.
 
-The syntax for declaration of variables is similiar to the programming language C. In the following examples use the data type byte.
+The syntax for declaration of variables is similar to the programming language C. In the following examples use the data type byte.
 
 A keyword is defined with the keyword \verb|proctype|. \verb|proctype| is followed by the identifier of the process. The statements of the process type is enclosed in curly braces \verb|{}| \cite{holzmann03}.
 
@@ -90,14 +90,14 @@ The keyword \verb|active| creates a new process instance of the following proces
 \subsubsection{Sequential Programming}
 \label{sec:sequential}
 
-Listing \ref{lst:interleavingcode} shows a system with one active process. The statements are executed sequentially. A instance of the process type \verb|sequential| is created. The process reads the global variable \verb|x|, computes $x+2$ and stores the result in the variable \verb|temp|. Then \verb|temp| is assigned \verb|x|. The order of the states of the corresponding state diagram is non-ambiguous. Figure \ref{fig:sequencielstatediagram} shows the state diagram.
+Listing \ref{lst:interleavingcode} shows a system with one active process. The statements are executed sequentially. An instance of the process type \verb|sequential| is created. The process reads the global variable \verb|x|, computes $x+2$ and stores the result in the variable \verb|temp|. Then \verb|temp| is assigned \verb|x|. The order of the states of the corresponding state diagram is non-ambiguous. Figure \ref{fig:sequencielstatediagram} shows the state diagram.
 
  \lstinputlisting[label={lst:interleavingcode},caption={system with a single process},numbers={left},float,language=Promela]{sequential.pml}  
 
 \subsubsection{Concurrent Programming}
 \label{sec:concurrent}
 
-Listing \ref{list:interleaving2proc} shows a system with 2 active processes. The processes are executed concurrently. The processes add a constant integer to the global variable \verb|x| like the system in section \ref{sec:sequential}. There are several possibilites the computation is executed. One possible computation would first execute all statements of process \verb|A| and then all statements of process \verb|B|. The scheduler can switch the process after every transition. Figure \ref{fig:interleavingtransitionsystem} shows the interleaved state diagram of the system in Listing \ref{list:interleaving2proc}.
+Listing \ref{list:interleaving2proc} shows a system with 2 active processes. The processes are executed concurrently. The processes add a constant integer to the global variable \verb|x| like the system in section \ref{sec:sequential}. There are several possibilities the computation is executed. One possible computation would first execute all statements of process \verb|A| and then all statements of process \verb|B|. The scheduler can switch the process after every transition. Figure \ref{fig:interleavingtransitionsystem} shows the interleaved state diagram of the system in listing \ref{list:interleaving2proc}.
 
 \lstinputlisting[label={list:interleaving2proc}, caption={Add operation with 2 processes},numbers=left,float,language=Promela, ]{interleavingproc.pml}    
 
@@ -137,23 +137,23 @@ Listing \ref{list:interleaving2proc} shows a system with 2 active processes. The
 \label{fig:interleavingtransitionsystem}
  \end{figure}
 
-The state diagram \ref{fig:interleavingtransitionsystem} shows that the system from Listing \ref{list:interleaving2proc} can terminate in 4 different states. If the scheduler strategy is unknow the resulting state is non-deterministic. Modelchecking tools like spin are able search the state space for unwanted states. Undesirable states are defined with Lineare Temporal Logic. Section \ref{sec:ltl} will explain how undesirable is defined.
+The state diagram \ref{fig:interleavingtransitionsystem} shows that the system from Listing \ref{list:interleaving2proc} can terminate in 4 different states. If the scheduler strategy is unknown the resulting state is non-deterministic. Model checking tools like spin are able search the state space for unwanted states. Undesirable states are defined with Linear Temporal Logic. Section \ref{sec:ltl} will explain how undesirable is defined.
 
 \subsection{Synchronization}
 \label{sec:synchronization}
 
-Four different non-deterministic terminal states in a program that adds constant integers to a shared variable isn't normaly the desired behavior. Processes can be synchronized to avoid race conditions. The following section will explain one way of synchronization on basis of an example. The example describes a synchronized variant of listing \ref{list:interleaving2proc}.
+Four different non-deterministic terminal states in a program that adds constant integers to a shared variable isn't normally the desired behavior. Processes can be synchronized to avoid race conditions. The following section will explain one way of synchronization on basis of an example. The example describes a synchronized variant of listing \ref{list:interleaving2proc}.
 
 \subsubsection{Synchronization example}
 \label{sec:syncexample}
 
 Listing \ref{lst:withoutsemaphore} shows a system with two active processes with the same process type. The processes are instantiated within the \verb|init|-process. It is always the first process activated. Both processes add the value $2$ to the value stored in \verb|x|. If you like to enforce that the resulting value in \verb|x| is $4$, you have to synchronize the processes. Only one process can be in the critical section (line 4-8). This is also called mutual exclusion. One way to achieve mutual exclusion is the use of semaphores.
 
-\lstinputlisting[label={lst:withoutsemaphore},caption={Program without mutual exlusion}, numbers=left,language=Promela]{withoutsemaphore.pml}
+\lstinputlisting[label={lst:withoutsemaphore},caption={Program without mutual exclusion}, numbers=left,language=Promela]{withoutsemaphore.pml}
 
 Listing \ref{lst:withsemaphore} shows a system that achieves mutual exclusion with semaphores. Processes have to acquire a semaphore, before they can enter the critical section. When this system terminates, the variable \verb|x| has always the value $4$.
 
-\lstinputlisting[label={lst:withsemaphore},numbers=left,float,language=Promela,caption={Mutual exlusion with semaphores}]{semaphore.pml}
+\lstinputlisting[label={lst:withsemaphore},numbers=left,float,language=Promela,caption={Mutual exclusion with semaphores}]{semaphore.pml}
 
 The Test \verb|x>0| and the following \verb|x--|-Operation have to be executed atomic. In Promela atomic sequences of statements are enclosed in curly braces with a preceding \verb|atomic| keyword.
 
@@ -162,7 +162,7 @@ Boolean expression like \verb|x>0|, without an assignment block processes when t
 \subsubsection{Deadlock Example}
 \label{sec:deadlock}
 
-When system contains more than one lock, a deadlock may occur. Listing \ref{list:deadlock} shows a system that contains a deadlock. Given the a computation of the system in which process \texttt{TakeAFirst} requests semaphore $A$ and in the next executed state process $B$ requests semaphore $B$. Both processes are waiting for the other semaphore to proceed. The system is dead.
+When system contains more than one lock, a deadlock may occur. Listing \ref{list:deadlock} shows a system that contains a deadlock. Given the computation of the system in which process \texttt{TakeAFirst} requests semaphore $A$ and in the next executed state process $B$ requests semaphore $B$. Both processes are waiting for the other semaphore to proceed. The system is dead.
 
 \lstinputlisting[label=list:deadlock,numbers=left,language=Promela,caption={Synchronization with deadlock}]{deadlock.pml}
 
@@ -171,16 +171,16 @@ Section \ref{sec:ltl} describes how spin can detect deadlock in systems specifie
 \section{Define correctness properties}
 \label{sec:ltl}
 
-The goal of model checking is to verify a behavioral model of the system against desired properties. This properties are called correctness properties. Examples for correctness properties are mutual exclusion and deadlock freedom. 
+The goal of model checking is to verify a behavioral model of the system against desired properties. These properties are called correctness properties. Examples for correctness properties are mutual exclusion and deadlock freedom. 
 
-Spin read correctness properties in a formal Form, called Linear Temporal Logic(LTL). This section explains correctness properties and LTL. For a better understanding of correctness properties atomic propositions and traces are described first. Atomic propositions are part of an LTL-Formula. And Traces are important because correctness properties verify traces.
+Spin read correctness properties in a formal Form, called Linear Temporal Logic (LTL). This section explains correctness properties and LTL. For a better understanding of correctness properties atomic propositions and traces are described first. Atomic propositions are part of an LTL-Formula. And Traces are important because correctness properties verify traces.
 
 \subsection{Atomic Propositions}
 \label{sec:atomicpropositions}
 
-Atomic propositions are typse of declarative sentences which can either true or false. They evaluate to \verb|True| or \verb|False|. The evaluation depends on the state the system is in. The expression \verb|crit < 2| is a atomic proposition. Atomic propositions can be replaced by identifiers. For exmaple, it is possible to define the sentence ``Process \verb|TakeAFirst| has aquired \verb|mutexA| and waits for \verb|mutexB| to be released.'' as $waitA$  that references the system in listing \ref{list:deadlock}. This example is used in section \ref{sec:safety} to describe deadlock freedom.
+Atomic propositions are types of declarative sentences which can either true or false. They evaluate to \verb|True| or \verb|False|. The evaluation depends on the state the system is in. The expression \verb|crit < 2| is an atomic proposition. Atomic propositions can be replaced by identifiers. For example, it is possible to define the sentence ``Process \verb|TakeAFirst| has acquired \verb|mutexA| and waits for \verb|mutexB| to be released.'' as $waitA$  that references the system in listing \ref{list:deadlock}. This example is used in section \ref{sec:safety} to describe deadlock freedom.
  
-We define $AP$ as a set of atomic propositions of a system to be verified. We can map to every state a set of atomic propositions who evaluate to \verb|True|. That set of each state is subset of $2^{AP}$.
+We define $AP$ as a set of atomic propositions of a system to be verified. We can map to every state a set of atomic propositions who evaluate to \verb|True|. That set of each state is a subset of $2^{AP}$.
 
 Atomic propositions can be combined with propositional logic's operators (see table \ref{tab:operators_of_propositionallogic}.
 
@@ -199,14 +199,14 @@ Atomic propositions can be combined with propositional logic's operators (see ta
 \subsection{Traces and words}
 \label{sec:traces}
 
-The models that describe the behavior of a system in section \ref{sec:interleaving} can be executed in a simulation. The execution is one possible computation, a sequence of states. If the computation terminates as desired (in reactive system, computation typically do not terminate) a possible sequence starts in a initial state and ends in a defined terminal state. Every state can be mapped to a subset of $2^{AP}$. This subset contains atomic proposition that evaluate to \verb|True| in this state. A trace is a sequence of this subsets. Hence, a trace is a word over the alphabet $2^{AP}$.
+The models that describe the behavior of a system in section \ref{sec:interleaving} can be executed in a simulation. The execution is one possible computation, a sequence of states. If the computation terminates as desired (in reactive system, computation typically do not terminate) a possible sequence starts in an initial state and ends in a defined terminal state. Every state can be mapped to a subset of $2^{AP}$. This subset contains atomic proposition that evaluate to \verb|True| in this state. A trace is a sequence of these subsets. Hence, a trace is a word over the alphabet $2^{AP}$.
 
 A system $S$ can have multiple sequences of states. Hence, there are multiple traces in $S$. All traces of a system $S$ are referred as $Traces(S)$. $Traces(S)$ defines a language.
 
 \subsubsection{Traceexample}
 \label{sec:traceexample}
 
-In this section presents an example trace. The system, that could produce the trace is shown in listing \ref{lst:criticalsection}.
+In this section presents an example trace. The system that could produce the trace is shown in listing \ref{lst:criticalsection}.
 
 \lstinputlisting[label=lst:criticalsection,caption={Critical section problem},numbers=left]{criticalsection.pml}
 
@@ -253,7 +253,7 @@ Linear-time Properties can be classified into Safety-, Liveness- and Fairness-Pr
 
 A safety-property verifies if a system contains undesirable states.
 
-Deadlock freedom is a safety property. Listing \ref{list:deadlock} contains a deadlock. To verify if the this system contains a deadlock a safety property can be defined as follows. Two atomic propositions are defined:
+Deadlock freedom is a safety property. Listing \ref{list:deadlock} contains a deadlock. To verify if the system contains a deadlock a safety property can be defined as follows. Two atomic propositions are defined:
 \begin{description}
 \item[waitA] Process \texttt{TakeAFirst} acquired \texttt{mutexA} and waits for \texttt{mutexB}.
 \item[waitB] Process \texttt{TakeBFirst} acquired \texttt{mutexB} and waits for \texttt{mutexA}.
@@ -289,7 +289,7 @@ A model checker verifies, if $P_{mutex}$ holds for every trace (or word) in Tra\
 \subsubsection{Liveness-Properties}
 \label{sec:liveness}
 
-Safety properties claim, that there are no words with bad prefixes in a language. Every system S that does nothing, that is $Traces(S)=\varnothing$, satisfies this every safety property. Safety properties cannot verify if progress occur. That's where Liveness properties are needed.
+Safety properties claim, that there are no words with bad prefixes in a language. Every system S that does nothing, that is $Traces(S)=\varnothing$, satisfies this every safety property. Safety properties cannot verify if progress occurs. That's where Liveness properties are needed.
 
 Liveness properties define that every trace can be expanded so that it still holds the liveness property. A liveness property claims that an event occurs infinitely often. Liveness properties can only verify infinite traces. That means the computation of the system must not terminate.
 
@@ -297,7 +297,7 @@ Starvation freedom is a liveness property. Starvation freedom claims, that every
 
 \lstinputlisting[label={lst:starvation},caption={Critical section with starvation},numbers=left, language=Promela,float]{starvation.pml}
 
-To demonstrate the definition of a liveness property listing \ref{lst:starvation} defines a system $S_{spinlock}$ that doesn't terminate and starvation free achieved. Process A tries to acquire \texttt{mutexB}. If \texttt{mutexB} isn't available it checks the availability again in an endless loop (spinlock). All traces in this system are infinite. But there are traces where process A never reaches its critical section. This is not an desired behavior. With a liveness property it is possible to claim that there are no such traces.
+To demonstrate the definition of a liveness property listing \ref{lst:starvation} defines a system $S_{spinlock}$ that doesn't terminate and starvation free achieved. Process A tries to acquire \texttt{mutexB}. If \texttt{mutexB} isn't available it checks the availability again in an endless loop (spinlock). All traces in this system are infinite. But there are traces where process A never reaches its critical section. This is not a desired behavior. With a liveness property it is possible to claim that there are no such traces.
 
 The atomic proposition critA defines that the variable \texttt{critA} evaluates to True.
 
@@ -316,9 +316,9 @@ $S_{spinlock}$ doesn't satisfy $P_{Starv}$. Traces($S_{spinlock}$) contains infi
 \subsection{Linear Temporal Logic}
 \label{sec:lineartemporallogic}
 
-The spin model checker tool reads the system model as Promela source code. To verify the model, it needs also to read the system specification. As discussed in section \ref{sec:satisfactionrelations} with linear time properties it is possible to describe desired behavior. But it would be cumbersome to write down the linear time properties as in equation \ref{eq:starvationfreedom} for example with a keyboard. Linear Temporal Logic(LTL) is a formal logic that can express linear time properties. It can easy encoded in with ASCII character, so spin can read. The LTL is just one way to describe the specification of correctness properties in spin. This section report describes only the specification with LTL.
+The spin model checker tool reads the system model as Promela source code. To verify the model, it needs also to read the system specification. As discussed in section \ref{sec:satisfactionrelations} with linear time properties it is possible to describe desired behavior. But it would be cumbersome to write down the linear time properties as in equation \ref{eq:starvationfreedom} for example with a keyboard. Linear Temporal Logic (LTL) is a formal logic that can express linear time properties. It can be encoded in ASCII character, so spin can read. The LTL is just one way to describe the specification of correctness properties in spin. This section report describes only the specification with LTL.
 
-A LTL-Formula contains atomic propositions, which are connected with logic operators and with temporal operators. With temporal operators it is possible to define behavior over serveral states. The linear time properties in section \ref{sec:satisfactionrelations} consider all possible states. The temporal operator used in this report are shown in \ref{tab:temporal_operators}.
+A LTL-Formula contains atomic propositions, which are connected with logic operators and with temporal operators. With temporal operators it is possible to define behavior over several states. The linear time properties in section \ref{sec:satisfactionrelations} consider all possible states. The temporal operators used in this report are shown in \ref{tab:temporal_operators}.
 
 \begin{table}
   \centering
@@ -413,7 +413,7 @@ The requirements can be formalized as follows:
   \end{multline}
 \end{enumerate}
 
-The first formula ensure that every traffic light has only two states and that the state are mutualy exclusive. The second formula checks if the traffic lights witch repititive beetwen the states red and green. The third formula ensures that only one traffic light is green at the moment. Keep in mind that both traffic light can be red. The fourth formula defines that traffic light have to switch. A Traffic light is red until it switches to green. An it can stay green unit it switches back to red.
+The first formula ensures that every traffic light has only two states and that the states are mutually exclusive. The second formula checks if the traffic lights switch repetitive between the states red and green. The third formula ensures that only one traffic light is green at the moment. Keep in mind that both traffic lights can be red. The fourth formula defines that traffic light have to switch. A Traffic light is red until it switches to green. It can stay green for several states until it switches back to red.
 
 \subsection{Promela Model}
 \label{sec:trafficlightsmodel}
