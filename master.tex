@@ -1,4 +1,4 @@
-\documentclass[a4paper, twoside]{article}
+\documentclass[12pt, 4paper, twoside]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage{listings}
@@ -19,6 +19,7 @@ captionpos=b
 
 \title{Modeling concurrent systems and specification of correctness properties with Spin}
 \author{Lukas Hofmaier \texttt{lukas.hofmaier@hsr.ch}}
+\date{June 19, 2013}
 
 \maketitle
 
@@ -31,7 +32,7 @@ This article will give a brief introduction what model checking is and how model
 \section{Model Checking}
 \label{sec:modelchecking}
 
-The Goal of a model checker is to verify behavioral models. That is, a model checker verifies whether a condition for a given model holds. Spin is a model checker. The model is described in Promela. Promela is a system specification language. The condition or property can be described by linear temporal logic.  Spin takes Promela source code and the LTL Properties as input and tells the user if the model holds for the defined properties.
+The goal of a model checker is to verify behavioral models. That is, a model checker verifies whether a condition for a given model holds. Spin is a model checker. The model is described in Promela. Promela is a system specification language. The condition or property can be described by linear temporal logic.  Spin takes Promela source code and the LTL Properties as input and tells the user if the model holds for the defined properties.
 
 \subsection{Why Model Checking}
 \label{sec:why}
@@ -173,7 +174,7 @@ Section \ref{sec:ltl} describes how spin can detect deadlock in systems specifie
 
 The goal of model checking is to verify a behavioral model of the system against desired properties. These properties are called correctness properties. Examples for correctness properties are mutual exclusion and deadlock freedom. 
 
-Spin read correctness properties in a formal Form, called Linear Temporal Logic (LTL). This section explains correctness properties and LTL. For a better understanding of correctness properties atomic propositions and traces are described first. Atomic propositions are part of an LTL-Formula. And Traces are important because correctness properties verify traces.
+Spin read correctness properties in a formal form, called Linear Temporal Logic (LTL). This section explains correctness properties and LTL. For a better understanding of correctness properties atomic propositions and traces are described first. Atomic propositions are part of an LTL-Formula. And Traces are important because correctness properties verify traces.
 
 \subsection{Atomic Propositions}
 \label{sec:atomicpropositions}
@@ -206,11 +207,11 @@ A system $S$ can have multiple sequences of states. Hence, there are multiple tr
 \subsubsection{Traceexample}
 \label{sec:traceexample}
 
-In this section presents an example trace. The system that could produce the trace is shown in listing \ref{lst:criticalsection}.
+This section presents an example trace. The system that could produce the trace is shown in listing \ref{lst:criticalsection}.
 
 \lstinputlisting[label=lst:criticalsection,caption={Critical section problem},numbers=left]{criticalsection.pml}
 
-For a better understanding, the sequence of states is first show. A state can be represented as a triple, containing the value of the variable \verb|crit| and the locations counters of process \verb|A| and process \verb|B|. The first value shows the line number of the location counter of process \verb|A| and the second the line number of process \verb|B|.
+For a better understanding, the sequence of states is first show. A state can be represented as a triple, containing the value of the variable \verb|crit| and the locations counters of process \verb|A| and process \verb|B|. The first value shows the line number of the location counter of process \verb|A| and the second the line number of the location counter of process \verb|B|.
 
 A possible sequence $\pi$ of states, would be:
 
@@ -240,11 +241,11 @@ trace(\pi) = \varnothing \{critA\} \varnothing \{critB\} \varnothing
 \subsection{Linear-Time Properties}
 \label{sec:satisfactionrelations}
 
-The goal of model checking is to verification. Verification is the evaluation of whether a system complies with a specification. So far this article dealt with the definition of the system model. To verify a system, a specification is needed. Here Linear-Time Properties come into play. Linear-time properties define which words systems can accept and which word they must not accept. A Linear-time property defines a language over the alphabet $2^{AP}$, like the system under consideration. If $P$ is a Linear-time Property and $S$ is the system under consideration, then $S$ satisfies $P$, if $\text{Traces}(S) \subseteq P$. The Formula 
+The goal of model checking is to verify behavioral models. Verification is the evaluation of whether a system complies with a specification. So far this article dealt with the definition of the system model. To verify a system, a specification is needed. Here Linear-Time Properties come into play. Linear-time properties define which words systems can accept and which word they must not accept. A Linear-time property defines a language over the alphabet $2^{AP}$. If $S$ is the system under consideration, the language of $S$ is defined with $\text{Traces}(S)$. If $P$ is a Linear-time Property, then $S$ satisfies $P$, if $\text{Traces}(S) \subseteq P$. The Formula 
 \[
-TS \models P \iff Traces(S) \subseteq P 
+TS \models P \iff \text{Traces}(S) \subseteq P 
 \]
-means the same. $ \models $ is a satisfaction relation.
+means the same. $ \models $ is a satisfaction relation\cite[p. 98]{baier08}.
 
 Linear-time Properties can be classified into Safety-, Liveness- and Fairness-Properties. The sections \ref{sec:safety} and \ref{sec:liveness} explain Safety- and Liveness-Properties.
 
