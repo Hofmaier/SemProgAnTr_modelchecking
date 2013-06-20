@@ -1,4 +1,4 @@
-\documentclass[12pt, 4paper, twoside]{article}
+\documentclass[12pt,a4paper,twoside]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage{listings}
@@ -156,7 +156,7 @@ Listing \ref{lst:withsemaphore} shows a system that achieves mutual exclusion wi
 
 \lstinputlisting[label={lst:withsemaphore},numbers=left,float,language=Promela,caption={Mutual exclusion with semaphores}]{semaphore.pml}
 
-The Test \verb|x>0| and the following \verb|x--|-Operation have to be executed atomic. In Promela atomic sequences of statements are enclosed in curly braces with a preceding \verb|atomic| keyword.
+The Test \texttt{x>0} and the following \texttt{x--} operation have to be executed atomic. In Promela atomic sequences of statements are enclosed in curly braces with a preceding \texttt{atomic} keyword.
 
 Boolean expression like \verb|x>0|, without an assignment block processes when the expression evaluates to False until it evaluates to True.
 
@@ -185,7 +185,7 @@ We define $AP$ as a set of atomic propositions of a system to be verified. We ca
 
 Atomic propositions can be combined with propositional logic's operators (see table \ref{tab:operators_of_propositionallogic}.
 
-\begin{table}[h]
+\begin{table}[ht]
   \centering
 
   \begin{tabular}{l l l}
@@ -247,7 +247,7 @@ TS \models P \iff \text{Traces}(S) \subseteq P
 \]
 means the same. $ \models $ is a satisfaction relation\cite[p. 98]{baier08}.
 
-Linear-time Properties can be classified into Safety-, Liveness- and Fairness-Properties. The sections \ref{sec:safety} and \ref{sec:liveness} explain Safety- and Liveness-Properties.
+Linear-time Properties can be classified into Safety-, Liveness- and Fair\-ness-Properties. The sections \ref{sec:safety} and \ref{sec:liveness} explain Safety- and Liveness-Properties.
 
 \subsubsection{Safety-properties}
 \label{sec:safety}
@@ -290,7 +290,7 @@ A model checker verifies, if $P_{mutex}$ holds for every trace (or word) in Tra\
 \subsubsection{Liveness-Properties}
 \label{sec:liveness}
 
-Safety properties claim, that there are no words with bad prefixes in a language. Every system S that does nothing, that is $Traces(S)=\varnothing$, satisfies this every safety property. Safety properties cannot verify if progress occurs. That's where Liveness properties are needed.
+Safety properties claim, that there are no words with bad prefixes in a language. Every system S that does nothing, that is $Traces(S)=\varnothing$, satisfies every safety property. Safety properties cannot verify if progress occurs. That's where Liveness properties are needed.
 
 Liveness properties define that every trace can be expanded so that it still holds the liveness property. A liveness property claims that an event occurs infinitely often. Liveness properties can only verify infinite traces. That means the computation of the system must not terminate.
 
@@ -298,7 +298,7 @@ Starvation freedom is a liveness property. Starvation freedom claims, that every
 
 \lstinputlisting[label={lst:starvation},caption={Critical section with starvation},numbers=left, language=Promela,float]{starvation.pml}
 
-To demonstrate the definition of a liveness property listing \ref{lst:starvation} defines a system $S_{spinlock}$ that doesn't terminate and starvation free achieved. Process A tries to acquire \texttt{mutexB}. If \texttt{mutexB} isn't available it checks the availability again in an endless loop (spinlock). All traces in this system are infinite. But there are traces where process A never reaches its critical section. This is not a desired behavior. With a liveness property it is possible to claim that there are no such traces.
+To demonstrate the definition of a liveness property listing \ref{lst:starvation} defines a system $S_{spinlock}$ that doesn't terminate and doesn't achieve starvation freedom. Process \texttt{A} tries to acquire \texttt{mutexB}. If \texttt{mutexB} isn't available it checks the availability again in an endless loop (spinlock). All traces in this system are infinite. But there are traces where process texttt{A} never reaches its critical section. This is not a desired behavior. With a liveness property it is possible to claim that there are no such traces.
 
 The atomic proposition critA defines that the variable \texttt{critA} evaluates to True.
 
