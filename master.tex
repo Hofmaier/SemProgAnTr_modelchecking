@@ -109,11 +109,11 @@ Listing \ref{list:interleaving2proc} shows a system with 2 active processes. The
 \scalebox{0.9}{
  \begin{tikzpicture}[node distance=2.5cm, on grid, auto]
 \tikzstyle{every node}=[font=\tiny]
-   \node[state, initial, rectangle, align=left](s1){$x=0$\\$tempA=0$\\$tempB=0$};
-   \node[state, rectangle, align=left](s2) [below left=of s1]{$x=0$\\$tempA=2$\\$tempB=0$};
-   \node[state, rectangle, align=left](s3)[below left=of s2]{$x=2$\\$tempA=2$\\$tempB=0$};
-  \node[state, rectangle, align=left](s4)[below left=of s3]{$x=2$\\$tempA=2$\\$tempB=7$};
-\node[state, rectangle, align=left](s5)[below =of s4]{$x=7$\\$tempA=2$\\$tempB=7$};
+   \node[state, initial, rectangle, align=left](s1){x=0\\tempA=0\\tempB=0\\pcA:4, pcB:9};
+   \node[state, rectangle, align=left](s2) [below left=of s1]{x=0\\tempA=2\\tempB=0\\pcA:5, pcB:9};
+   \node[state, rectangle, align=left](s3)[below left=of s2]{x=2\\tempA=2\\tempB=0\\pcA:6, pcB:9};
+  \node[state, rectangle, align=left](s4)[below left=of s3]{x=2\\tempA=2\\tempB=7\\pcA:6, pcB:10};
+\node[state, rectangle, align=left](s5)[below =of s4]{x=7\\tempA=2\\tempB=7\\pcA:6, pcB:11};
 \node[state, rectangle, align=left](s6)[below right=of s1]{$x=0$\\$tempA=0$\\$tempB=5$};
 \node[state, rectangle, align=left](s7)[below right=of s6]{$x=5$\\$tempA=0$\\$tempB=5$};
 \node[state, rectangle, align=left](s8)[below right=of s7]{$x=5$\\$tempA=7$\\$tempB=5$};
