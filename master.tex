@@ -24,15 +24,15 @@ captionpos=b
 \maketitle
 
 \begin{abstract}
-  Verifying concurrent programs is a challenge. Model checking is a formal method for the verification of concurrent programs. In comparison to peer reviewing and software testing, model checking can proof if a defined property holds or not. It can proof that the program does the right thing (what is defined in the specification).
+  Verifying concurrent programs is a challenge. Model checking is a formal method for the verification of programs. This article focuses on the verification of concurrent programs. In comparison to peer reviewing and software testing, model checking can proof if a defined property holds or not. It can proof that the program does the right thing (defined in the specification).
 
-This article will give a brief introduction what model checking is and how models and properties are defined for the spin model checker tool. First model checking is compared to other verification methods. The section describes the advantages of model checking. The next section explains how to use the language Promela to describe the behavior of a model. The next section describes correctness properties in general and how to define properties with temporal linear logic (LTL). The last section presents a complete example of specifying correctness properties and a behavioral model of a traffic light system.
+This article will give a brief introduction what model checking is and how models and properties are defined for the spin model checker tool. First model checking is compared to other verification methods. The advantages of model checking are described.  How to use the language Promela to describe the behavior of a model is explained next. Correctness properties in general and how to define properties with temporal linear logic (LTL) is explained next. Last a complete example of specifying correctness properties and a behavioral model of a traffic light system is presented and explained.
 \end{abstract}
 
 \section{Model Checking}
 \label{sec:modelchecking}
 
-The goal of a model checker is to verify behavioral models. That is, a model checker verifies whether a condition for a given model holds. Spin is a model checker. The model is described in Promela. Promela is a system specification language. The condition or property can be described by linear temporal logic.  Spin takes Promela source code and the LTL Properties as input and tells the user if the model holds for the defined properties.
+The goal of a model checker is to verify behavioral models. That is, a model checker verifies whether a condition for a given model holds. Spin is a model checker. The model is described in Promela. Promela is a system specification language. Spin analyses behavioral models written in Promela. The condition or property can be described by linear temporal logic.  Spin takes Promela source code and the LTL Properties as input and tells the user if the model holds for the defined properties.
 
 \subsection{Why Model Checking}
 \label{sec:why}
@@ -181,7 +181,7 @@ Spin read correctness properties in a formal form, called Linear Temporal Logic 
 
 Atomic propositions are types of declarative sentences which can either true or false. They evaluate to \verb|True| or \verb|False|. The evaluation depends on the state the system is in. The expression \verb|crit < 2| is an atomic proposition. Atomic propositions can be replaced by identifiers. For example, it is possible to define the sentence ``Process \verb|TakeAFirst| has acquired \verb|mutexA| and waits for \verb|mutexB| to be released.'' as $waitA$  that references the system in listing \ref{list:deadlock}. This example is used in section \ref{sec:safety} to describe deadlock freedom.
  
-We define $AP$ as a set of atomic propositions of a system to be verified. We can map to every state a set of atomic propositions who evaluate to \verb|True|. That set of each state is a subset of $2^{AP}$.
+We define $AP$ as a set of atomic propositions of a system to be verified. To every state in a transition system we can map a set of atomic propositions that evaluates to true. That set of each state is a subset of $2^{AP}$.
 
 Atomic propositions can be combined with propositional logic's operators (see table \ref{tab:operators_of_propositionallogic}.
 
@@ -269,9 +269,9 @@ Linear-time properties can be defined with a propositional logic formula. The fo
 Formula \ref{eq:pl_formula_for_deadlockfreedom} refers only to a single state in the computation. Deadlock freedom demands, that $\phi$ is true in every state of the computation. This requirement can be expressed with
 \begin{equation}
   \label{eq:deadlockfreedom}
-  P_{dlock} = {A_0 A_1 A_2 \dots \in (2^{AP})^{\omega} | \forall \geq i.   A_i \models \phi}
+  P_{dlock} = {A_0 A_1 A_2 \dots \in (2^{AP})^{\omega} | \forall i \geq 0.   A_i \models \phi}
 \end{equation}
-. $(2^{AP})^{\omega}$ is the set of all possible words in $2^{AP}$.
+. $(2^{AP})^{\omega}$ is the set of all possible words in $2^{AP}$. $ \forall i \geq 0$ means for all words in $(2^{AP})^{\omega}$. $A_i \models \phi$ demands that $\phi$ evaluates to true in state $A_i$.
 Formula \ref{eq:deadlockfreedom} is a linear time property. It refers to all states in a possible computation. 
 
 Linear time properties can also claim mutual exclusion. A safety property that demands mutual exclusion in the system $S$ of listing \ref{lst:criticalsection}, defines a language over $2^{AP}$ without the word $\{\text{critA},\text{critB}\}$. This can be formulated with
@@ -285,7 +285,7 @@ or with
 P_{mutex}   = {A_0 A_1 A_2 \dots \in (2^{AP})^{\omega} | \forall \geq i.   A_i \models \neg critA \lor \neg critB}
 \end{equation}
 
-A model checker verifies, if $P_{mutex}$ holds for every trace (or word) in Tra\-ces(S).
+A model checker verifies, that $P_{mutex}$ holds for every trace (or word) in Tra\-ces(S).
 
 \subsubsection{Liveness-Properties}
 \label{sec:liveness}
