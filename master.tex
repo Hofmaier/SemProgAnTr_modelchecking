@@ -75,12 +75,14 @@ In a sequential program with one process, there is one possibility in which orde
 \subsection{Interleaving Examples}
 \label{sec:interleavingexamples}
 
+Interleaving can be best explained with an example. This section explains interleaving through two systems. A system with one single process and a system with two processes running concurrently. The example systems are written in Promela. Therefore a brief introduction to the Promela language is given first.
+
 \subsubsection{Promela}
 \label{sec:promela}
 
-Spin verifies models of system behavior, written in the system specification language Promela. In the following section, concepts are explained by Promela code examples. This section is intended to contribute to the understanding of the code examples.
+Spin verifies models of system behavior, written in the system specification language Promela. This section is intended to contribute to the understanding of the code examples.
 
-Promela is intended to describe abstractions of systems designs. It's specification language. A Promela model describes the behavior of a system. Promela is intended to describe concurrent software systems.
+Promela is intended to describe abstractions of systems designs. It's a specification language. A Promela model describes the behavior of a system. Promela is intended to describe concurrent software systems.
 
 The syntax for declaration of variables is similar to the programming language C. In the following examples use the data type byte.
 
@@ -101,7 +103,6 @@ Listing \ref{lst:interleavingcode} shows a system with one active process. The s
 Listing \ref{list:interleaving2proc} shows a system with 2 active processes. The processes are executed concurrently. The processes add a constant integer to the global variable \verb|x| like the system in section \ref{sec:sequential}. There are several possibilities the computation is executed. One possible computation would first execute all statements of process \verb|A| and then all statements of process \verb|B|. The scheduler can switch the process after every transition. Figure \ref{fig:interleavingtransitionsystem} shows the interleaved state diagram of the system in listing \ref{list:interleaving2proc}.
 
 \lstinputlisting[label={list:interleaving2proc}, caption={Add operation with 2 processes},numbers=left,float,language=Promela, ]{interleavingproc.pml}    
-
 
 \begin{figure}
 \centering
@@ -138,12 +139,12 @@ Listing \ref{list:interleaving2proc} shows a system with 2 active processes. The
 \label{fig:interleavingtransitionsystem}
  \end{figure}
 
-The state diagram \ref{fig:interleavingtransitionsystem} shows that the system from Listing \ref{list:interleaving2proc} can terminate in 4 different states. If the scheduler strategy is unknown the resulting state is non-deterministic. Model checking tools like spin are able search the state space for unwanted states. Undesirable states are defined with Linear Temporal Logic. Section \ref{sec:ltl} will explain how undesirable is defined.
+The state diagram \ref{fig:interleavingtransitionsystem} shows that the system from Listing \ref{list:interleaving2proc} can terminate in 4 different states. If the scheduler strategy is unknown the resulting state is non-deterministic. The resulting state is dependent on scheduler strategy. This is called a race condition. Race conditions are a real nemesis for software systems that should be eliminated at the root \cite{subra11}. Model checking tools like spin are able search the state space for unwanted states. 
 
 \subsection{Synchronization}
 \label{sec:synchronization}
 
-Four different non-deterministic terminal states in a program that adds constant integers to a shared variable isn't normally the desired behavior. Processes can be synchronized to avoid race conditions. The following section will explain one way of synchronization on basis of an example. The example describes a synchronized variant of listing \ref{list:interleaving2proc}.
+To avoid race conditions, processes can be synchronized. The following section will explain one way of synchronization on basis of an example. The example describes a synchronized variant of listing \ref{list:interleaving2proc}.
 
 \subsection{Synchronization Examples}
 \label{sec:syncexample}
@@ -478,6 +479,12 @@ Stephan Kleuker,
 Formale Modelle der Softwareent\-wicklung,
 View\-eg+\-Teub\-ner,
 2009.
+
+\bibitem{subra11}
+Venkat Subramaniam,
+Programming Concurrency on the JVM: Mastering Synchronization, STM and Actors,
+Pragmatic Bookshelf,
+2011
 
 \end{thebibliography}
 
