@@ -148,9 +148,9 @@ The state diagram \ref{fig:interleavingtransitionsystem} shows that the system f
 \subsection{Synchronization}
 \label{sec:synchronization}
 
-To avoid race conditions, processes can be synchronized. The following section will explain one way of synchronization on basis of an example. The example describes a synchronized variant of listing \ref{list:interleaving2proc}.
+To avoid race conditions, processes can be synchronized. The following section will explain one way of synchronization on basis of two examples. The example describes a synchronized variant of listing \ref{list:interleaving2proc}.
 
-\subsection{Synchronization Examples}
+\subsection{Mutual exclusion example}
 \label{sec:syncexample}
 
 Listing \ref{lst:withoutsemaphore} shows a system with two active processes with the same process type. The processes are instantiated within the \verb|init|-process. It is always the first process activated. Both processes add the value $2$ to the value stored in \verb|x|. If you like to enforce that the resulting value in \verb|x| is $4$, you have to synchronize the processes. Only one process can be in the critical section (line 4-8). This is also called mutual exclusion. One way to achieve mutual exclusion is the use of semaphores.
@@ -165,7 +165,7 @@ The Test \texttt{x>0} and the following \texttt{x--} operation have to be execut
 
 Boolean expression like \verb|x>0|, without an assignment block processes when the expression evaluates to False until it evaluates to True.
 
-\subsubsection{Deadlock Example}
+\subsection{Deadlock Example}
 \label{sec:deadlock}
 
 When system contains more than one lock, a deadlock may occur. Listing \ref{list:deadlock} shows a system that contains a deadlock. Given the computation of the system in which process \texttt{TakeAFirst} requests semaphore $A$ and in the next executed state process $B$ requests semaphore $B$. Both processes are waiting for the other semaphore to proceed. The system is dead.
@@ -174,17 +174,17 @@ When system contains more than one lock, a deadlock may occur. Listing \ref{list
 
 Section \ref{sec:ltl} describes how spin can detect deadlock in systems specified with Promela.
 
-\section{Define correctness properties}
+\section{How to define correctness properties}
 \label{sec:ltl}
 
 The goal of model checking is to verify a behavioral model of the system against desired properties. These properties are called correctness properties. Examples for correctness properties are mutual exclusion and deadlock freedom. 
 
-Spin read correctness properties in a formal form, called Linear Temporal Logic (LTL). This section explains correctness properties and LTL. For a better understanding of correctness properties atomic propositions and traces are described first. Atomic propositions are part of an LTL-Formula. And Traces are important because correctness properties verify traces.
+In Spin correctness properties are specified in a formal form, called Linear Temporal Logic (LTL). This section explains correctness properties and LTL. For a better understanding of correctness properties atomic propositions and traces are described first. Atomic propositions are part of an LTL-Formula. And Traces are important because correctness properties verify traces.
 
 \subsection{Atomic Propositions}
 \label{sec:atomicpropositions}
 
-Atomic propositions are types of declarative sentences which can either true or false. They evaluate to \verb|True| or \verb|False|. The evaluation depends on the state the system is in. The expression \verb|crit < 2| is an atomic proposition. Atomic propositions can be replaced by identifiers. For example, it is possible to define the sentence ``Process \verb|TakeAFirst| has acquired \verb|mutexA| and waits for \verb|mutexB| to be released.'' as $waitA$  that references the system in listing \ref{list:deadlock}. This example is used in section \ref{sec:safety} to describe deadlock freedom.
+Atomic propositions are types of declarative sentences which can either be  true or false. They evaluate to \verb|True| or \verb|False|. The evaluation depends on the state of the system. The expression \verb|crit < 2| is an atomic proposition. Atomic propositions can be replaced by identifiers. For example, it is possible to define the sentence ``Process \verb|TakeAFirst| has acquired \verb|mutexA| and waits for \verb|mutexB| to be released.'' as $waitA$  that references the system in listing \ref{list:deadlock}. This example is used in section \ref{sec:safety} to describe deadlock freedom.
  
 We define $AP$ as a set of atomic propositions of a system to be verified. To every state in a transition system we can map a set of atomic propositions that evaluates to true. That set of each state is a subset of $2^{AP}$.
 
@@ -205,7 +205,7 @@ Atomic propositions can be combined with propositional logic's operators (see ta
 \subsection{Traces and words}
 \label{sec:traces}
 
-The models that describe the behavior of a system in section \ref{sec:interleaving} can be executed in a simulation. The execution is one possible computation, a sequence of states. If the computation terminates as desired (in reactive system, computation typically do not terminate) a possible sequence starts in an initial state and ends in a defined terminal state. Every state can be mapped to a subset of $2^{AP}$. This subset contains atomic proposition that evaluate to \verb|True| in this state. A trace is a sequence of these subsets. Hence, a trace is a word over the alphabet $2^{AP}$.
+The models that describe the behavior of a system in section \ref{sec:interleaving} can be executed in a simulation. The execution is one possible computation, a sequence of states. If the computation terminates as desired (in reactive system, computation typically do not terminate) a possible sequence starts in an initial state and ends in a defined terminal state. Every state can be mapped to a subset of $2^{AP}$. $2^{AP}$ is the power set of $AP$. This subset contains atomic proposition that evaluate to \verb|True| in this state. A trace is a sequence of these subsets. Hence, a trace is a word over the alphabet $2^{AP}$.
 
 A system $S$ can have multiple sequences of states. Hence, there are multiple traces in $S$. All traces of a system $S$ are referred as $Traces(S)$. $Traces(S)$ defines a language.
 
@@ -216,7 +216,7 @@ This section presents an example trace. The system that could produce the trace 
 
 \lstinputlisting[label=lst:criticalsection,caption={Critical section problem},numbers=left]{criticalsection.pml}
 
-For a better understanding, the sequence of states is first show. A state can be represented as a triple, containing the value of the variable \verb|crit| and the locations counters of process \verb|A| and process \verb|B|. The first value shows the line number of the location counter of process \verb|A| and the second the line number of the location counter of process \verb|B|.
+For a better understanding, the sequence of states is first shown. A state can be represented as a triple, containing the value of the variable \verb|crit| and the locations counters of process \verb|A| and process \verb|B|. The first value shows the line number of the location counter of process \verb|A| and the second the line number of the location counter of process \verb|B|.
 
 A possible sequence $\pi$ of states, would be:
 
@@ -270,6 +270,8 @@ Linear-time properties can be defined with a propositional logic formula. The fo
   \label{eq:pl_formula_for_deadlockfreedom}
 \phi = \neg \text{waitA} \lor \neg \text{waitB}  
 \end{equation}
+If formula \ref{eq:pl_formula_for_deadlockfreedom} evaluates to false in a given state, the system is in a deadlock situation. 
+
 
 Formula \ref{eq:pl_formula_for_deadlockfreedom} refers only to a single state in the computation. Deadlock freedom demands, that $\phi$ is true in every state of the computation. This requirement can be expressed with
 \begin{equation}
@@ -287,7 +289,7 @@ Linear time properties can also claim mutual exclusion. A safety property that d
 or with
 \begin{equation}
   \label{eq:mutex}
-P_{mutex}   = {A_0 A_1 A_2 \dots \in (2^{AP})^{\omega} | \forall \geq i.   A_i \models \neg critA \lor \neg critB}
+P_{mutex}   = {A_0 A_1 A_2 \dots \in (2^{AP})^{\omega} | \forall i \geq 0.   A_i \models \neg critA \lor \neg critB}
 \end{equation}
 
 A model checker verifies, that $P_{mutex}$ holds for every trace (or word) in Tra\-ces(S).
@@ -322,7 +324,7 @@ $S_{spinlock}$ doesn't satisfy $P_{Starv}$. Traces($S_{spinlock}$) contains infi
 \subsection{Linear Temporal Logic}
 \label{sec:lineartemporallogic}
 
-The spin model checker tool reads the system model as Promela source code. To verify the model, it needs also to read the system specification. As discussed in section \ref{sec:satisfactionrelations} with linear time properties it is possible to describe desired behavior. But it would be cumbersome to write down the linear time properties as in equation \ref{eq:starvationfreedom} for example with a keyboard. Linear Temporal Logic (LTL) is a formal logic that can express linear time properties. It can be encoded in ASCII character, so spin can read. The LTL is just one way to describe the specification of correctness properties in spin. This section report describes only the specification with LTL.
+The spin model checker tool reads the system model as Promela source code. To verify the model, it needs also to read the system specification. As discussed in section \ref{sec:satisfactionrelations} with linear time properties it is possible to describe desired behavior. But it would be cumbersome to write down the linear time properties as in equation \ref{eq:starvationfreedom} for example with a keyboard. Linear Temporal Logic (LTL) is a formal logic that can express linear time properties. It can be encoded in ASCII character, so spin can read. The LTL is just one way to describe the specification of correctness properties in spin. This article describes only the specification with LTL.
 
 A LTL-Formula contains atomic propositions, which are connected with logic operators and with temporal operators. With temporal operators it is possible to define behavior over several states. The linear time properties in section \ref{sec:satisfactionrelations} consider all possible states. The temporal operators used in this report are shown in \ref{tab:temporal_operators}.
 
@@ -341,11 +343,11 @@ A LTL-Formula contains atomic propositions, which are connected with logic opera
 
 The mutual exlusion safety property $P_{mutex}$ in section \ref{sec:safety} can be formulated in LTL as follows:
 \[
-  {A_0 A_1 A_2 \dots \in (2^{AP})^{\omega} | \forall \geq i.   A_i \models \neg critA \lor \neg critB}
+  {A_0 A_1 A_2 \dots \in (2^{AP})^{\omega} | \forall i \geq 0. A_i \models \neg critA \lor \neg critB}
 \]
 
 \[
-= \square \neg (critA,critB)
+= \square \neg (critA \land critB)
 \]
 
 The liveness property $P_{Starv}$ in section \ref{sec:liveness} can be formulated in LTL as follows:
