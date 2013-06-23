@@ -155,7 +155,7 @@ To avoid race conditions, processes can be synchronized. The following section w
 
 Listing \ref{lst:withoutsemaphore} shows a system with two active processes with the same process type. The processes are instantiated within the \verb|init|-process. It is always the first process activated. Both processes add the value $2$ to the value stored in \verb|x|. If you like to enforce that the resulting value in \verb|x| is $4$, you have to synchronize the processes. Only one process can be in the critical section (line 4-8). This is also called mutual exclusion. One way to achieve mutual exclusion is the use of semaphores.
 
-\lstinputlisting[label={lst:withoutsemaphore},caption={Program without mutual exclusion}, numbers=left,language=Promela]{withoutsemaphore.pml}
+\lstinputlisting[label={lst:withoutsemaphore},caption={Program without mutual exclusion}, numbers=left,language=Promela,float]{withoutsemaphore.pml}
 
 Listing \ref{lst:withsemaphore} shows a system that achieves mutual exclusion with semaphores. Processes have to acquire a semaphore, before they can enter the critical section. When this system terminates, the variable \verb|x| has always the value $4$.
 
@@ -205,7 +205,7 @@ Atomic propositions can be combined with propositional logic's operators (see ta
 \subsection{Traces and words}
 \label{sec:traces}
 
-The models that describe the behavior of a system in section \ref{sec:interleaving} can be executed in a simulation. The execution is one possible computation, a sequence of states. If the computation terminates as desired (in reactive system, computation typically do not terminate) a possible sequence starts in an initial state and ends in a defined terminal state. Every state can be mapped to a subset of $2^{AP}$. $2^{AP}$ is the power set of $AP$. This subset contains atomic proposition that evaluate to \verb|True| in this state. A trace is a sequence of these subsets. Hence, a trace is a word over the alphabet $2^{AP}$.
+The models that describe the behavior of a system in section \ref{sec:interleaving} can be executed in a simulation. The execution is one possible computation, a sequence of states. If the computation terminates as desired (in reactive system, computation typically do not terminate) a possible sequence starts in an initial state and ends in a defined terminal state. Every state $s_i$ can be mapped to a subset of $2^{AP}$. $2^{AP}$ is the power set of $AP$. This subset contains atomic proposition that evaluate to \verb|True| in $s_i$. A trace is a sequence of these subsets. Hence, a trace is a word over the alphabet $2^{AP}$.
 
 A system $S$ can have multiple sequences of states. Hence, there are multiple traces in $S$. All traces of a system $S$ are referred as $Traces(S)$. $Traces(S)$ defines a language.
 
