@@ -3,7 +3,7 @@
 \usepackage{tikz}
 \usepackage{listings}
 \usetikzlibrary{automata,positioning}
-\usepackage{natbib}
+\usepackage{attrib}
 \lstset{
 basicstyle=\footnotesize \ttfamily,
 language=Promela,
@@ -28,6 +28,7 @@ framexleftmargin=1.5em
 
 \begin{frame}
   \frametitle{What's all about?}
+  Does a behavioral model $S$ satisfy a defined property $P$?
   \[
   S \models P
   \]
@@ -50,12 +51,13 @@ Model checking checks 100\% of all possible paths.
 \section{Modeling Concurrent Systems}
 
 \begin{frame}
-  \frametitle{Modeling Concurrent Systems}
-  \begin{enumerate}
+  \frametitle{  Defining $S$ in $S \models P$}
+
+  \begin{itemize}
   \item   Spin checks verification models.
   \item The specification language that it accepts is called Promela.
   \item Emphasis of Promela is on modeling of process synchronization.
-  \end{enumerate}
+  \end{itemize}
 \end{frame}
 
 \subsection{Interleaving}
@@ -153,30 +155,82 @@ active proctype A(){
 \subsection{Synchronization}
 
 \begin{frame}
-  \frametitle{Synchronizatoin Motivation}
-  % \begin{quote}
-  %   Race conditions are a real nemesis that should be eliminated at the root. 
-  % \end{quote} 
-\citet{subra11}
+  \frametitle{Synchronization Motivation}
+  \begin{quote}
+    Race conditions are a real nemesis that should be eliminated at the root. For an application that deals with mutability, every single access to shared mutable state must be verified to be correct. Even if one of them is broken, the entire application is broken. This is a tall order for our concurrent app to fall apart, only a single line of code that deals with concurrency needs to take a wrong step. In fact, a significant number of concurrent Java apps are broken, and we simply don’t know it.
+
+ \attrib{ - Venkat Subramaniam \cite{subra11} -}
+  \end{quote} 
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Lock the critical section with a mutex}
+  \begin{figure}
+    \centering
+    \includegraphics[scale=0.3]{mutex}
+  \end{figure}
+\begin{lstlisting}
+#define acquire(mutex) atomic{mutex>0;mutex--;}
+#define release(mutex) mutex++;
+byte mutex=1
+\end{lstlisting}
+
 \end{frame}
 
 \begin{frame}
   \frametitle{Locks are super tricky to use}
-  \includegraphics[scale=0.6]{dpsolved}
+  \begin{figure}
+    \centering
+  \includegraphics[scale=0.7]{dpsolved}
+  \end{figure}
 \end{frame}
+
+\section{How to define correctness properties}
+
+\begin{frame}
+  \frametitle{Defining $P$ in $S \models P$}
+  
+  \begin{itemize}
+    \item Linear Temporal Logic (LTL) is a formalism to express propositions in terms of time.
+  \item  Linear Temporal Logic(LTL) is one way to define correctness properties in Spin.
+  \item An formula of LTL is built from atomic propostions and from operators.
+  \end{itemize}
+
+\end{frame}
+
+\subsection{Atomic propositions}
+
+
+\begin{frame}
+  \frametitle{Atomic Propositions}
+  \begin{itemize}
+  \item Declarative sentences. Can either be true or false.
+  \item Evaluate to true or false
+  \end{itemize}
+  \begin{block}{Example}
+    
+  \end{block}
+\end{frame}
+
 \begin{frame}
   \frametitle{For Further Reading}
-%   \bibliographystyle{plainnat}
 
-%   \begin{thebibliography}
+  \begin{thebibliography}{Subramaniam, 2011}
 
-%   \bibitem{subra11}
-% Venkat Subramaniam,
-% Programming Concurrency on the JVM: Mastering Synchronization, STM and Actors,
-% Pragmatic Bookshelf,
-% 2011.
+\bibitem{baier08}
+Christel Baier Joost-Pieter Katoen,
+Principles of Model Checking,
+The MIT Press,
+2008.
 
-% \end{thebibliography}
+  \bibitem{subra11}
+Venkat Subramaniam,
+Programming Concurrency on the JVM: Mastering Synchronization, STM and Actors,
+Pragmatic Bookshelf,
+2011.
+
+\end{thebibliography}
 \end{frame}
 
 \end{document}
