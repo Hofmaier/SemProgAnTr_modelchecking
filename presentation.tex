@@ -15,7 +15,7 @@ framexleftmargin=1.5em
 \title{Model Checking}
 \subtitle{Modeling concurrent systems and specification of correctness properties}
 \author{Lukas Hofmaier \texttt{lukas.hofmaier@hsr.ch}}
-\date{June 19, 2013 \\ Progam Analysis and Transformation Seminar FS13}
+\date{June 25, 2013 \\ Progam Analysis and Transformation Seminar FS13}
 
 \begin{document}
 \maketitle
@@ -41,11 +41,12 @@ framexleftmargin=1.5em
 
 \begin{frame}
   \frametitle{Why Model Checking}
+Alternate software verification techniques:
   \begin{description}
   \item[Peer review] Code is analyzed statically. Difficult to detect errors caused by concurrency.
   \item[Testing] Code is compiled and executed. Can expose error. Cannot proof absence of errors.
   \end{description}\
-Model checking checks 100\% of all possible paths.
+Model checking checks 100\% of all possible paths. But Model checking suffers from the state exposion problem.
 \end{frame}
 
 \section{Modeling Concurrent Systems}
@@ -54,7 +55,8 @@ Model checking checks 100\% of all possible paths.
   \frametitle{  Defining $S$ in $S \models P$}
 
   \begin{itemize}
-  \item   Spin checks verification models.
+  \item A model is written that describes the behavior (not the structure) of the system $S$.
+  \item Spin checks verification models.
   \item The specification language that it accepts is called Promela.
   \item Emphasis of Promela is on modeling of process synchronization.
   \end{itemize}
@@ -62,34 +64,27 @@ Model checking checks 100\% of all possible paths.
 
 \subsection{Interleaving}
 
-\begin{frame}
-  \frametitle{Interleaving}
-  \begin{itemize}
-  \item Program statements are interlocked.
-  \item Interleaving is a enumeration of all possible state sequences.
-  \end{itemize}
-\end{frame}
+
 
 \begin{frame}[fragile]
-  \frametitle{State diagram representation}
+  \frametitle{A first Mickey Mouse example}
   \begin{columns}
-
     \begin{column}{.5\textwidth}
+    \begin{block}{Verification model}
       \begin{figure}
         \centering
 \begin{lstlisting}
 byte x=0;
-
 active proctype A(){
        byte tempA = x + 2;
-       x = tempA;
+       x = tempA
 }
 \end{lstlisting}
       \end{figure}
+    \end{block}
     \end{column}
-
     \begin{column}{.5\textwidth}
-      
+      \begin{block}{State diagram}
       \begin{figure}
         \centering
         \begin{tikzpicture}[auto]
@@ -100,9 +95,26 @@ active proctype A(){
           \path[->](s2) edge node {x=temp}(s3);
         \end{tikzpicture}   
       \end{figure} 
+      \end{block}
     \end{column}    
   \end{columns}
+\end{frame}
 
+\begin{frame}
+  \frametitle{Interleaving}
+  \begin{block}{Problem}
+How does a state diagram of a system with several active processes look like?      \end{block}
+\begin{block}{Arbitrarily interleaving}
+  
+\end{block}
+  \begin{itemize}
+  \item Interleaving is a paradigm to model systems with multiple processes.
+  \item Based on the view that only one processor is available.
+  \item A global state is composed of current individual states of all active processes.
+  \item In every state non-deterministic choice between which state comes next.
+  \item Program statements are interlocked.
+  \item Interleaving is a enumeration of all possible state sequences.
+  \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -191,28 +203,159 @@ byte mutex=1
 \begin{frame}
   \frametitle{Defining $P$ in $S \models P$}
   
-  \begin{itemize}
-    \item Linear Temporal Logic (LTL) is a formalism to express propositions in terms of time.
-  \item  Linear Temporal Logic(LTL) is one way to define correctness properties in Spin.
-  \item An formula of LTL is built from atomic propostions and from operators.
-  \end{itemize}
 
 \end{frame}
 
 \subsection{Atomic propositions}
 
 
-\begin{frame}
+\begin{frame}[fragile]
   \frametitle{Atomic Propositions}
   \begin{itemize}
-  \item Declarative sentences. Can either be true or false.
+  \item Declarative sentences or expression. Can either be true or false.
   \item Evaluate to true or false
   \end{itemize}
   \begin{block}{Example}
-    
+\begin{lstlisting}
+bool critA=0;
+active proctype A(){
+   critA = True;
+   //critical section
+   critA = False
+}
+\end{lstlisting}
+The expression \texttt{(critA)} is an atomic proposition.
   \end{block}
 \end{frame}
 
+\subsection{Traces and words}
+
+\begin{frame}
+  \frametitle{Traces and words}
+  Traces are an important concept to understand Linear-Time Properties.
+  \begin{itemize}
+  \item A computation is a sequence of states.
+  \item Every state $s_i$ can be mapped to a subset of $2^{AP}$. $2^{AP}$ is the power set of $AP$.
+  \item The subset contains a combination of atomic propositions that evaluate to true in the corresponding state.
+  \item Multiple different sequences possible for the same system (non-determinism, different input) $\rightarrow$ several different traces.
+  \item $\text{Traces}(S)$ represents all possible traces of system $S$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Trace example}
+  \begin{columns}
+    \begin{column}{.4\textwidth}
+      \begin{block}{Verification model}
+        \begin{lstlisting}[frame=single]
+bool critA=False;
+bool critB=False;
+proctype A(){
+  critA = True;
+  //critsec
+  critA = False
+}
+proctype B(){
+  critB = True;
+  //critsec
+  critB = False
+}
+\end{lstlisting}
+      \end{block}
+    \end{column}
+
+    \begin{column}{.6\textwidth}
+      \begin{block}{Possible sequence (of several possible)}
+        \begin{equation*}
+  \label{eq:path}
+  \begin{split}
+(4,9,critA=False,critB=False) \rightarrow \\
+(6, 9, critA=True,critB=False) \rightarrow \\
+(7, 9, critA=False,critB=False) \rightarrow \\
+(7,11,critA=False,critB=True) \rightarrow \\
+(7,12,critA=False,critB=False)
+  \end{split}
+\end{equation*}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Sequence $\rightarrow$ trace}
+  \begin{block}{Sequence}
+        \begin{equation*}
+  \label{eq:path}
+  \begin{split}
+\pi=(4,9,critA=False,critB=False) \rightarrow \\
+(6, 9, critA=True,critB=False) \rightarrow \\
+(7, 9, critA=False,critB=False) \rightarrow \\
+(7,11,critA=False,critB=True) \rightarrow \\
+(7,12,critA=False,critB=False)
+  \end{split}
+\end{equation*}    
+  \end{block}
+
+  \begin{block}{Atomic propositions}
+    \[
+\text{AP}=\{critA, critB\}
+\]
+  \end{block}
+  \begin{block}{Trace or word}
+\[
+trace(\pi) = \varnothing \{critA\} \varnothing \{critB\} \varnothing
+\].
+  \end{block}
+\end{frame}
+\subsection{Linear-Time Properties}
+
+\begin{frame}
+  \frametitle{Linear-Time Properties}
+    \begin{description}
+    \item[Linear-time] Concept where time is seen sequentially.
+    \item[Linear-time property] Specify the traces that a system should exhibit. Defines a language over $2^{AP}$.
+    \item[Traces($S$)] All traces or words that system accepts. Defines a language over $2^{AP}$.
+    \end{description}
+If $P$ is a Linear-time Property, then $S$ satisfies $P$, if $\text{Traces}(S) \subseteq P$. 
+\[
+TS \models P \iff \text{Traces}(S) \subseteq P 
+\]
+
+\end{frame}
+
+\subsubsection{Safety properties}
+
+\begin{frame}
+  \frametitle{Claim mutual exlusion with $P_{mutex}$! }
+  Now we can express the requirement of mutual exlusion.
+  \begin{block}{For a single state}
+\[
+ \neg critA \lor \neg critB
+\]
+Evaluates to false if critA and critB are true.
+  \end{block}
+  \begin{block}{For $(2^{AP})^{\omega}$ - the set of all possible words in $2^{AP}$}
+\[
+P_{mutex}   = {A_0 A_1 A_2 \dots \in (2^{AP})^{\omega} | \forall i \geq 0.   A_i \models \neg critA \lor \neg critB}
+\]
+The language $P_{mutex}$ contains no words with $\{critA,critB\}$. $\{critA,critB\} \not \subseteq A_i$
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Check if $P_{mutex}$ holds}
+  Spin checks if the language of the system model $S$ contains words not in $P_{mutex}$. Words containing  
+\end{frame}
+
+\begin{frame}
+  \frametitle{Linear Temporal Logic}
+  \begin{itemize}
+ \item Linear Temporal Logic (LTL) is a formalism to express propositions in terms of time.
+  \item  Linear Temporal Logic(LTL) is one way to define correctness properties in Spin.
+  \item An formula of LTL is built from atomic propostions and from operators.
+
+  \end{itemize}
+\end{frame}
 \begin{frame}
   \frametitle{For Further Reading}
 
