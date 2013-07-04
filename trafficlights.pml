@@ -6,7 +6,7 @@ proctype trafficlight(bit name){
 	 do
 	 :: tlstate[name]==red ->
 	    center!p,name;
-	    tlstate[name]=gruen;
+	    tlstate[name]=green;
 	    tlstate[name]=red;
 	    center!v,name;
 	 od;
@@ -22,8 +22,8 @@ init{
 	atomic{
 		tlstate[0]=red;
 		tlstate[1]=red;
-		run ampel(0);
-		run ampel(1);
-		run Semaphor();
+		run trafficlight(0);
+		run trafficlight(1);
+		run Semaphore();
 	};		
 }

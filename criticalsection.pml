@@ -1,12 +1,12 @@
 bool critA = false;
 bool critB = false;
 active proctype A(){
-	 critA = True;
+	 critA = true;
 	 //inside critical section
-	 critA = False
+	 critA = false
 }
 active proctype B(){
-	 critB = True;
+	 critB = true;
 	 //inside critical section
-	 critB = False
+	 critB = false
 }

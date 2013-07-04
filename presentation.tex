@@ -64,8 +64,6 @@ Model checking checks 100\% of all possible paths. But Model checking suffers fr
 
 \subsection{Interleaving}
 
-
-
 \begin{frame}[fragile]
   \frametitle{A first Mickey Mouse example}
   \begin{columns}
@@ -202,18 +200,22 @@ byte mutex=1
 
 \begin{frame}
   \frametitle{Defining $P$ in $S \models P$}
-  
-
+To verify a system, we need also to provide a specification or property.  
+\begin{itemize}
+\item Linear-time Properties are specifications for system behavior.
+\item Linear-time Properties specify traces.
+\item Traces are sequences of sets of atomic propositions.
+\end{itemize}
 \end{frame}
 
 \subsection{Atomic propositions}
-
 
 \begin{frame}[fragile]
   \frametitle{Atomic Propositions}
   \begin{itemize}
   \item Declarative sentences or expression. Can either be true or false.
   \item Evaluate to true or false
+  \item We define a set of atomic propositions $AP$ for the system under consideration.
   \end{itemize}
   \begin{block}{Example}
 \begin{lstlisting}
@@ -235,9 +237,11 @@ The expression \texttt{(critA)} is an atomic proposition.
   Traces are an important concept to understand Linear-Time Properties.
   \begin{itemize}
   \item A computation is a sequence of states.
-  \item Every state $s_i$ can be mapped to a subset of $2^{AP}$. $2^{AP}$ is the power set of $AP$.
-  \item The subset contains a combination of atomic propositions that evaluate to true in the corresponding state.
-  \item Multiple different sequences possible for the same system (non-determinism, different input) $\rightarrow$ several different traces.
+  \item Every state $s_i$ can be mapped to a element of $2^{AP}$. $2^{AP}$ is the power set of $AP$.
+  \item The element is a set and contains a combination of atomic propositions that evaluate to true in the corresponding state.
+  \item A trace is a sequence of sets of atomic propositions that are valid in the states of the path fragment.
+  \item A trace is a word over the alphabet $2^{AP}$.
+  \item Several sequences possible for the same system (non-determinism, different input) $\rightarrow$ several different traces.
   \item $\text{Traces}(S)$ represents all possible traces of system $S$.
   \end{itemize}
 \end{frame}
@@ -247,7 +251,7 @@ The expression \texttt{(critA)} is an atomic proposition.
   \begin{columns}
     \begin{column}{.4\textwidth}
       \begin{block}{Verification model}
-        \begin{lstlisting}[frame=single]
+        \begin{lstlisting}[]
 bool critA=False;
 bool critB=False;
 proctype A(){
@@ -311,50 +315,67 @@ trace(\pi) = \varnothing \{critA\} \varnothing \{critB\} \varnothing
 
 \begin{frame}
   \frametitle{Linear-Time Properties}
-    \begin{description}
-    \item[Linear-time] Concept where time is seen sequentially.
-    \item[Linear-time property] Specify the traces that a system should exhibit. Defines a language over $2^{AP}$.
-    \item[Traces($S$)] All traces or words that system accepts. Defines a language over $2^{AP}$.
-    \end{description}
+    \begin{itemize}
+    \item Linear-time is a concept where time is seen sequentially.
+    \item Linear-time property specify the traces that a system should exhibit.
+\item Defines a set of words over $2^{AP}$ that are admissible.
+\item A LT-Property is a subset of $(2^{AP})^{\omega}$. $(2^{AP})^{\omega}$ is the set of all possible words over $2^{AP}$.
+    \item  All traces or words that system accepts are defined with Traces($S$).
+    \end{itemize}
 If $P$ is a Linear-time Property, then $S$ satisfies $P$, if $\text{Traces}(S) \subseteq P$. 
 \[
-TS \models P \iff \text{Traces}(S) \subseteq P 
+S \models P \iff \text{Traces}(S) \subseteq P 
 \]
 
 \end{frame}
 
-\subsubsection{Safety properties}
 
 \begin{frame}
   \frametitle{Claim mutual exlusion with $P_{mutex}$! }
   Now we can express the requirement of mutual exlusion.
   \begin{block}{For a single state}
 \[
- \neg critA \lor \neg critB
+ \neg critA \lor \neg critB = \neg( critA \land critB)
 \]
 Evaluates to false if critA and critB are true.
   \end{block}
-  \begin{block}{For $(2^{AP})^{\omega}$ - the set of all possible words in $2^{AP}$}
-\[
-P_{mutex}   = {A_0 A_1 A_2 \dots \in (2^{AP})^{\omega} | \forall i \geq 0.   A_i \models \neg critA \lor \neg critB}
-\]
-The language $P_{mutex}$ contains no words with $\{critA,critB\}$. $\{critA,critB\} \not \subseteq A_i$
-  \end{block}
+
+\begin{block}{For all states in $S$}
+\begin{multline}
+P_{mutex} = \text{set of all words } A_0 A_1 A_2 \dots \\ \text{with} \{critA,critB\} \not \subseteq A_i \text{for all } 0 \leq i
+\end{multline}
+The language $P_{mutex}$ contains no words with $\{critA,critB\}$.
+\end{block}
 \end{frame}
 
 \begin{frame}
   \frametitle{Check if $P_{mutex}$ holds}
-  Spin checks if the language of the system model $S$ contains words not in $P_{mutex}$. Words containing  
+  \begin{itemize}
+  \item   A model checker checks if the language of the Traces($S$) contains words not in $P_{mutex}$.
+  \item  A Word where P does not hold contain a \textit{bad prefix}. A word that contains $\{critA,critB\}$.
+  \end{itemize}
+
 \end{frame}
+
+\subsection{Linear Temporal Logic}
 
 \begin{frame}
   \frametitle{Linear Temporal Logic}
   \begin{itemize}
  \item Linear Temporal Logic (LTL) is a formalism to express propositions in terms of time.
-  \item  Linear Temporal Logic(LTL) is one way to define correctness properties in Spin.
-  \item An formula of LTL is built from atomic propostions and from operators.
+  \item  LTL is one way to define correctness properties in Spin.
+  \item A formula of LTL is built from atomic propostions and from operators.
 
   \end{itemize}
+
+\[
+P_{mutex} =  {A_0 A_1 A_2 \dots \in (2^{AP})^{\omega} | \forall i \geq 0. A_i \models \neg critA \lor \neg critB}
+\]
+
+\[
+P_{mutex} = \square \neg (critA \land critB)
+\]
+
 \end{frame}
 \begin{frame}
   \frametitle{For Further Reading}
